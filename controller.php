@@ -20,33 +20,34 @@ class BeurspleinController extends JController
 
     // Register Extra tasks
     //$this->registerTask( 'add', 'edit' );
-  }  
-  
+  }
+
   /**
    * The default task, so display home
    */
-  
+
   function Display()
-  {    
+  {
     //Get the models
     $stocksModel    = JController::getModel("Stocks");
     $portfolioModel = JController::getModel("Portfolio");
     $userModel     = JController::getModel("Users");
-    
+
     //Get the view
-    $viewName = JRequest::getVar('view');    
+    $viewName = JRequest::getVar('view');
     $view     = JController::getView($viewName,'html');
-    
+
     //Add the models to the view
     $view->setModel($stocksModel);
     $view->setModel($portfolioModel);
     $view->setModel($userModel);
-    
+
     if($viewName=="history") $view->setModel(JController::getModel("History"));
-    
+    if($viewName=='dealcards') $view->setModel(JController::getModel("Cards"));
+
     //Display it
     $view->display();
-  }  
+  }
 
   /**
    * display the current values of the stocks
@@ -56,54 +57,54 @@ class BeurspleinController extends JController
   {
     $stocks  = JRequest::getVar('stock'  , 'default value goes here', 'post');
     $options = JRequest::getVar('options', 'default value goes here', 'post');
-    
+
     $msg = "Error, message not set";
     $error = false;
-    
+
     if(!is_array($stocks)||!is_array($options))
     {
       $msg = "Je hebt niks gekocht/verkocht";
       $error = false;
     }
     else
-    {  
+    {
       //Get the model
       $portfolioModel = JController::getModel("Portfolio");
-      
+
       //Parse the stocks + options
       $stocks = $portfolioModel->parseStocks($stocks, $options, $msg);
-      
+
       if($stocks === false)
-      {  
+      {
         $error = true;
       }
       else
-      {          
+      {
         //Get the user's id
         $user = JFactory::getUser();
         $user_id = $user->id;
-        
+
         //Get the user's money
         $userModel = JController::getModel("Users");
         $money = $userModel->getMoney($user_id);
-        
+
         //Get the pricelist
         $stocksModel = JController::getModel("Stocks");
-        $priceList = $stocksModel->getPriceList();  
-        
-        //Check if money is enough    
+        $priceList = $stocksModel->getPriceList();
+
+        //Check if money is enough
         foreach($stocks as $stock_id => $amount)
         {
-	  $totalValue += $amount * $priceList[$stock_id];
+	        $totalValue += $amount * $priceList[$stock_id];
         }
         if($totalValue>$money)
         {
           $msg = "Je hebt te weinig geld om die aandelen te kopen";
           $error = true;
-        }        
+        }
         else
         {
-          //Voeg de aandelen toe      
+          //Voeg de aandelen toe
           if($portfolioModel->addStocks($user_id, $stocks, $msg))
           {
             //Update the money
@@ -115,18 +116,18 @@ class BeurspleinController extends JController
 	    {
 	      $error = true;
 	      $msg = "Error, je geld is niet geupdated";
-	    }          
+	    }
           }
           else
           {
             $error = true;
-          }    
-        }    
+          }
+        }
       }
     }
-    
+
     $link = "index.php?option=com_beursplein&view=stocks";
-    
+
     if($error)
     {
       $this->setRedirect($link, $msg, 'error');
@@ -182,3 +183,4 @@ class BeurspleinController extends JController
     $this->setRedirect( 'index.php?option=com_hello', $msg );
   }*/
 }
+
