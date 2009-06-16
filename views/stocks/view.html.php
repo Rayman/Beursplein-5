@@ -50,7 +50,8 @@ class BeurspleinViewStocks extends JView
       $stocksTable .= "\t<tr>\r\n";
       
       //Aandeel
-      $stocksTable .= "\t\t<td>\r\n\t\t\t<img src=\"./images/beursplein/{$stock['image']}\" height=\"30\" alt=\"{$stock['name']}\"/> \r\n";
+      $stocksTable .= "\t\t<td>\r\n\t\t\t<img src=\"./images/beursplein/{$stock['image']}\"
+        height=\"30\" alt=\"{$stock['name']}\"/> \r\n";
       $stocksTable .= "\t\t\t".$stock['name']."\r\n\t\t</td>\r\n";
       
       //Waarde
@@ -92,9 +93,12 @@ class BeurspleinViewStocks extends JView
       $stocksTable .= "\t\t<td>{$amount}</td>\r\n";
       
       //Actie
-      $stocksTable .= "\t\t<td>\r\n\t\t\t<input type=\"text\" size=\"10\" name=\"stock[{$stock['id']}]\" value=\"\" onchange=\"updateMoney(this)\" />\r\n";
-      $stocksTable .= "\t\t\t<label><input type=\"radio\" name=\"options[{$stock['id']}]\" value=\"Buy\"  onchange=\"updateMoney()\" />Koop</label>\r\n";
-      $stocksTable .= "\t\t\t<label><input type=\"radio\" name=\"options[{$stock['id']}]\" value=\"Sell\" onchange=\"updateMoney()\" />Verkoop</label>\r\n\t\t</td>\r\n";
+      $stocksTable .= "\t\t<td>\r\n\t\t\t<input type=\"text\" size=\"10\"
+        name=\"stock[{$stock['id']}]\" value=\"\" onchange=\"updateMoney(this)\" />\r\n";
+      $stocksTable .= "\t\t\t<label><input type=\"radio\" name=\"options[{$stock['id']}]\"
+        value=\"Buy\"  onchange=\"updateMoney()\" />Koop</label>\r\n";
+      $stocksTable .= "\t\t\t<label><input type=\"radio\" name=\"options[{$stock['id']}]\"
+        value=\"Sell\" onchange=\"updateMoney()\" />Verkoop</label>\r\n\t\t</td>\r\n";
       
       $stocksTable .= "\t</tr>\r\n";
       

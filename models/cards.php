@@ -1,7 +1,7 @@
 <?php
 /**
- * Beursplein Model for Beursplein 5 Component
- */
+* Beursplein Model for Beursplein 5 Component
+*/
 
 // Check to ensure this file is included in Joomla!
 defined('_JEXEC') or die();
@@ -9,8 +9,8 @@ defined('_JEXEC') or die();
 jimport( 'joomla.application.component.model' );
 
 /**
- * Beursplein Model
- */
+* Beursplein Model
+*/
 class BeurspleinModelCards extends JModel
 {
   /**
@@ -46,4 +46,3 @@ class BeurspleinModelCards extends JModel
     }
   }
 }
-

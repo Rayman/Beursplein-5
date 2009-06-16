@@ -4,20 +4,18 @@ defined('_JEXEC') or die('Restricted access'); ?>
 
 <p>
   Dit zijn je aandelen:
+</p>
   <?php echo $this->stocksTable;?>
-  Totale waarde aandelen pakket: <?php echo $this->totalValue;?><br />
-  Liquide middelen voor transactie: <?php echo $this->money;?>
+<p>
+  Totale waarde aandelen pakket: &euro;<?php echo $this->totalValue;?><br />
+  Liquide middelen voor transactie: &euro;<?php echo $this->money;?>
 </p>
 <h2>Handels log</h2>
 <p>
-  <b>**** 03 mei 2009 21:56 ****</b><br />
-  Buy:   Dommelsch nv   #2   @   &euro;46 <br />
-  Buy:   J.Wilbers Bergsport   #9   @   	&euro;10<br />
-  Buy:   van Delluf Audio Solutions   #9   @    	&euro;10<br /><br />
-  
-  <b>**** 03 mei 2009 21:53 ****</b><br />
-  User started game <br />
+  ASDFDFDFSA
 </p>
+<h2>Kaarten</h2>
+<p>Asdfsla</p>
 
 
 
