@@ -13,8 +13,8 @@ jimport( 'joomla.application.component.view');
 class BeurspleinViewDealCards extends JView
 {
   /**
-  * Exectues a SQL command and displays error message and stuff
-  */
+   * Exectues a SQL command and displays error message and stuff
+   */
   function q($q)
   {
     $db =& JFactory::getDBO();
@@ -40,9 +40,9 @@ class BeurspleinViewDealCards extends JView
   }
 
   /**
-  * Deletes the cards table and generates it
-  * Usefull for when you just added a stock
-  */
+   * Deletes the cards table and generates it
+   * Usefull for when you just added a stock
+   */
   function emptyCardsDB()
   {
     $query = 'TRUNCATE TABLE `#__beursplein_cards`';
@@ -50,9 +50,9 @@ class BeurspleinViewDealCards extends JView
   }
 
   /**
-  * For each stock in the db, generates all possible cards
-  * and adds them to the db
-  */
+   * For each stock in the db, generates all possible cards
+   * and adds them to the db
+   */
   function generateCards()
   {
     $query = "SELECT `id`, `image` FROM `#__beursplein_stocks`";

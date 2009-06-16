@@ -25,13 +25,13 @@ class BeurspleinController extends JController
   /**
    * The default task, so display home
    */
-
   function Display()
   {
     //Get the models
     $stocksModel    = JController::getModel("Stocks");
     $portfolioModel = JController::getModel("Portfolio");
-    $userModel     = JController::getModel("Users");
+    $userModel      = JController::getModel("Users");
+    $cardsModel     = JController::getModel("Cards");
 
     //Get the view
     $viewName = JRequest::getVar('view');
@@ -42,8 +42,9 @@ class BeurspleinController extends JController
     $view->setModel($portfolioModel);
     $view->setModel($userModel);
 
-    if($viewName=="history") $view->setModel(JController::getModel("History"));
+    if($viewName=="history")   $view->setModel(JController::getModel("History"));
     if($viewName=='dealcards') $view->setModel(JController::getModel("Cards"));
+    if($viewName=='home')      $view->setModel(JController::getModel("Cards"));
 
     //Display it
     $view->display();
@@ -136,8 +137,91 @@ class BeurspleinController extends JController
     {
       $this->setRedirect($link, $msg);
     }
-  }
+  }  
+  
+  /*
+   * Geeft de user nieuwe kaarten
+   */
+  function getcards()
+  {
+    //Get the cards in the deck
+    $cardsModel = JController::getModel("Cards");
+    $deck = $cardsModel->getDeckCards();    
+    $deck = $cardsModel->sortCardsGroup($deck);
+    
+    //Some checks
+    // 3 kaarten uit groep A
+    // 2 kaarten uit groep B 
+    // 5 kaarten uit groep C
+        
+    if(count($deck[1])<6)
+      exit("Te weinig kaarten van soort 1");
+    if(count($deck[1])<6)
+      exit("Te weinig kaarten van soort 2");
+    if(count($deck[1])<6)
+      exit("Te weinig kaarten van soort 3");
+    if(count($deck[1])<8)
+      exit("Te weinig kaarten van soort 4");
+    if(count($deck[1])<8)
+      exit("Te weinig kaarten van soort 5");
+    
+    //Get random cards for each type
+    //array_pick doen't work here, it would be better :)
+    //Actually, with php it is almost impossible :)
+    
+    $dealedCards = array();
+    
+    foreach($deck as $group)
+    {
+      shuffle($group);
+      $count = 0;
+      
+      foreach($group as $card)
+      {
+        if($card['group'] == 1)
+          if($count == 3)
+            break;
+        if($card['group'] == 2)
+          if($count == 2)
+            break;
+        if($card['group'] == 3)
+          if($count == 5)
+            break;
+        $dealedCards[] = $card;
+        $count++;
+      }
+    }
+    
+    $user = JFactory::getUser();
+    $id   = $user->id;
+    $db   = JFactory::getDBO();    
+    
+    foreach($dealedCards as $card)
+    {
+      $tableCard     = new stdClass;
+      $tableCard->id = $card['id'];
+      $tableCard->user_id = $id;
+      
+      if (!$db->updateObject( '#__beursplein_cards', $tableCard, 'id' )) {
+        exit($db->stderr());
+      }
+    }
+    
+    $link = "index.php?option=com_beursplein&view=home";
+    
+    $error = false;
+    $msg   = "Je hebt nieuwe kaarten gekregen";
 
+    if($error)
+    {
+      $this->setRedirect($link, $msg, 'error');
+    }
+    else
+    {
+      $this->setRedirect($link, $msg);
+    }    
+  }  
+  
   /**
    * save a record (and redirect to main page)
    * @return void

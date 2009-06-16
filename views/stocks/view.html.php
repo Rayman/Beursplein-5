@@ -50,7 +50,7 @@ class BeurspleinViewStocks extends JView
       $stocksTable .= "\t<tr>\r\n";
       
       //Aandeel
-      $stocksTable .= "\t\t<td>\r\n\t\t\t<img src=\"./images/beursplein/{$stock['image']}\"
+      $stocksTable .= "\t\t<td>\r\n\t\t\t<img src=\"{$stock['image']}\"
         height=\"30\" alt=\"{$stock['name']}\"/> \r\n";
       $stocksTable .= "\t\t\t".$stock['name']."\r\n\t\t</td>\r\n";
       

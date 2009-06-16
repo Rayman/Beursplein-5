@@ -1,18 +1,74 @@
 <?php
 /**
-* Beursplein View for Beursplein 5 Component
-*/
+ * Beursplein View for Beursplein 5 Component
+ */
 
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
 jimport( 'joomla.application.component.view');
 
 /**
-* HTML View class for the Beursplein 5 Component
-*/
+ * HTML View class for the Beursplein 5 Component
+ */
 class BeurspleinViewHome extends JView
 {
   function display($tpl = null)
+  {
+    $this->buildStocksTable($stocksTable, $totalValue);
+    $this->assignRef( 'stocksTable', $stocksTable );
+    $this->assignRef( 'totalValue', $totalValue);
+    
+    $this->buildCardsTable($cardsTable);
+    $this->assignRef( 'cardsTable', $cardsTable );
+    
+    $money = $this->get( 'Money', 'Users' );
+    $this->assignRef( 'money', $money );
+    
+    parent::display($tpl);
+  }
+  
+  function buildCardsTable(&$cardsTable)
+  {
+    $cardsTable = "";
+    
+    $cardsList = $this->get('UserCards', 'Cards');
+    if(count($cardsList)==0)
+    {
+      $cardsTable  = "<form action=\"index.php?option=com_beursplein&amp;task=getcards\" ".
+          "method=\"post\">\r\n";
+      $cardsTable .= "\t<input type=\"submit\" name=\"getstocks\" value=\"Click hier om ".
+          "kaarten uitegedeeld te krijgen\" />\r\n";
+      $cardsTable .= "</form>\r\n";
+      return;
+    }
+    
+    $cardsTable = "<table>\r\n";
+    $counter    = 0;
+    
+    foreach($cardsList as $card)
+    {
+      if($counter%5==0)
+        $cardsTable .= "\t<tr>\r\n";
+      
+      $images = explode(",", $card['images']);
+
+      $cardsTable .= "\t\t<td>\r\n\t\t\t<table border=\"1\">\r\n\t\t\t\t<tr>\r\n";
+      $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[0]}\" alt=\"\" height=\"40\" /></td>\r\n";
+      $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[1]}\" alt=\"\" height=\"40\" /></td>\r\n";
+      $cardsTable .= "\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n";      
+      $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[2]}\" alt=\"\" height=\"40\" /></td>\r\n";
+      $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[3]}\" alt=\"\" height=\"40\" /></td>\r\n";
+      $cardsTable .= "\t\t\t\t</tr></table>\r\n\t\t</td>\r\n";
+      
+      if($counter%5==4)
+          $cardsTable .= "\t</tr>\r\n";
+      
+      $counter++;
+    }
+    $cardsTable .= "</table>\r\n";
+  }
+  
+  function buildStocksTable(&$stocksTable, &$totalValue)
   {
     //Get the user's stocks
     $userStockList = $this->get( 'StocksListTransformed', 'Portfolio' );
@@ -43,7 +99,7 @@ class BeurspleinViewHome extends JView
       
       //First the amount x icon + name
       $stocksTable .= "\t<tr>\r\n\t\t<td>{$stock['amount']} x ".
-        "<img src=\"images/beursplein/{$stockInfo['image']}\" ".
+        "<img src=\"{$stockInfo['image']}\" ".
         "height=\"20\" alt=\"images/beursplein/{$stockInfo['image']}\" />".
         "{$stockInfo['name']}</td>\r\n";
       
@@ -74,13 +130,6 @@ class BeurspleinViewHome extends JView
         "</span></td>\r\n\t</tr>\r\n";
     }
     
-    $stocksTable .= "</table>\r\n";
-    $this->assignRef( 'stocksTable', $stocksTable );
-    
-    $money = $this->get( 'Money', 'Users' );
-    $this->assignRef( 'money', $money );
-    $this->assignRef( 'totalValue', $totalValue);
-    
-    parent::display($tpl);
+    $stocksTable .= "</table>\r\n"; 
   }
 }

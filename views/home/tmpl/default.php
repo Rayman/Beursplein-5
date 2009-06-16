@@ -15,7 +15,6 @@ defined('_JEXEC') or die('Restricted access'); ?>
   ASDFDFDFSA
 </p>
 <h2>Kaarten</h2>
-<p>Asdfsla</p>
-
+<?php echo $this->cardsTable;?>
 
 
