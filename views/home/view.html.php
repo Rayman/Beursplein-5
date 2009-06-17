@@ -42,7 +42,7 @@ class BeurspleinViewHome extends JView
       return;
     }
     
-    $cardsTable = "<table>\r\n";
+    $cardsTable = "<form action=\"index.php?option=com_beursplein&amp;task=selectcard\" method=\"post\">\r\n\r\n<table>\r\n";
     $counter    = 0;
     
     foreach($cardsList as $card)
@@ -51,6 +51,8 @@ class BeurspleinViewHome extends JView
         $cardsTable .= "\t<tr>\r\n";
       
       $images = explode(",", $card['images']);
+      if(count($images)!=4)
+        exit("Error, geen 4 images");
 
       $cardsTable .= "\t\t<td>\r\n\t\t\t<table border=\"1\">\r\n\t\t\t\t<tr>\r\n";
       $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[0]}\" alt=\"\" height=\"40\" /></td>\r\n";
@@ -58,14 +60,16 @@ class BeurspleinViewHome extends JView
       $cardsTable .= "\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n";      
       $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[2]}\" alt=\"\" height=\"40\" /></td>\r\n";
       $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[3]}\" alt=\"\" height=\"40\" /></td>\r\n";
-      $cardsTable .= "\t\t\t\t</tr></table>\r\n\t\t</td>\r\n";
+      $cardsTable .= "\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t";
+      $cardsTable .= "<td><input type=\"radio\" name=\"card\" value=\"{$card['id']}\" /></td>\r\n";
+      $cardsTable .= "\t\t\t\t</tr>\r\n\t\t\t</table>\r\n\t\t</td>\r\n";
       
       if($counter%5==4)
           $cardsTable .= "\t</tr>\r\n";
       
       $counter++;
     }
-    $cardsTable .= "</table>\r\n";
+    $cardsTable .= "</table>\r\n<input type=\"submit\" value=\"Selecteer Kaart!\" />\r\n</form>\r\n";
   }
   
   function buildStocksTable(&$stocksTable, &$totalValue)
