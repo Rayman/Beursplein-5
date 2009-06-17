@@ -42,6 +42,8 @@ class BeurspleinViewHome extends JView
       return;
     }
     
+    $selectedCard = $this->get('SelectedCard', 'Users');
+    
     $cardsTable = "<form action=\"index.php?option=com_beursplein&amp;task=selectcard\" method=\"post\">\r\n\r\n<table>\r\n";
     $counter    = 0;
     
@@ -53,15 +55,21 @@ class BeurspleinViewHome extends JView
       $images = explode(",", $card['images']);
       if(count($images)!=4)
         exit("Error, geen 4 images");
-
-      $cardsTable .= "\t\t<td>\r\n\t\t\t<table border=\"1\">\r\n\t\t\t\t<tr>\r\n";
+      
+      if($card['id']==$selectedCard)
+        $cardsTable .= "\t\t<td>\r\n\t\t\t<table border=\"1\" style=\"background: yellow;\">\r\n\t\t\t\t<tr>\r\n";
+      else
+        $cardsTable .= "\t\t<td>\r\n\t\t\t<table border=\"1\">\r\n\t\t\t\t<tr>\r\n";
       $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[0]}\" alt=\"\" height=\"40\" /></td>\r\n";
       $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[1]}\" alt=\"\" height=\"40\" /></td>\r\n";
       $cardsTable .= "\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n";      
       $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[2]}\" alt=\"\" height=\"40\" /></td>\r\n";
       $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[3]}\" alt=\"\" height=\"40\" /></td>\r\n";
       $cardsTable .= "\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t";
-      $cardsTable .= "<td><input type=\"radio\" name=\"card\" value=\"{$card['id']}\" /></td>\r\n";
+      if($card['id']==$selectedCard)
+        $cardsTable .= "<td><input type=\"radio\" name=\"card\" value=\"{$card['id']}\" checked=\"checked\"/></td>\r\n";
+      else
+        $cardsTable .= "<td><input type=\"radio\" name=\"card\" value=\"{$card['id']}\" /></td>\r\n";
       $cardsTable .= "\t\t\t\t</tr>\r\n\t\t\t</table>\r\n\t\t</td>\r\n";
       
       if($counter%5==4)

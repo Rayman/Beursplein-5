@@ -23,7 +23,7 @@ class BeurspleinModelUsers extends JModel
     {
       $user = JFactory::getUser();
       $id = $user->id;
-    }    
+    }
     
     $db =& JFactory::getDBO();
     $query = "SELECT money FROM #__beursplein_users WHERE id=".$db->Quote("$id");
@@ -32,7 +32,7 @@ class BeurspleinModelUsers extends JModel
     if($db->getNumRows()!=1)
     {
       jexit("User not found");
-    }  
+    }
     
     return $db->loadResult();
   }
@@ -58,5 +58,23 @@ class BeurspleinModelUsers extends JModel
     {
       return true;
     } 
-  }   
+  }
+  
+  /**
+   * Sets card that the user selected
+   * @return card_id
+   */
+  function getSelectedCard($id = null)
+  {
+    if($id==null)
+    {
+      $user = JFactory::getUser();
+      $id   = $user->id;
+    }
+    
+    $q = "SELECT `card_id` FROM `#__beursplein_users` WHERE `id` = '{$id}'";
+    $db = JFactory::getDBO();
+    $db->setQuery($q);
+    return $db->loadResult(); 
+  }
 }

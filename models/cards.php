@@ -46,6 +46,11 @@ class BeurspleinModelCards extends JModel
     }
   }
   
+  /*
+   * Get all cards owned by user_id
+   * If null, selects current user
+   * @return The cards as AssocList
+   */
   function getUserCards($id = null)
   {
     if($id===null)
@@ -60,6 +65,10 @@ class BeurspleinModelCards extends JModel
     return $db->loadAssocList();
   }
   
+  /*
+    * Get all cards not owned by anyone (thus in deck)
+    * @return The cards as AssocList
+    */
   function getDeckCards()
   {
     $q = "SELECT * FROM `#__beursplein_cards` WHERE `user_id` IS NULL";
@@ -69,6 +78,10 @@ class BeurspleinModelCards extends JModel
     return $db->loadAssocList();
   }
   
+  /*
+    * Gets the card with that id
+    * @return The card as Assoc
+    */
   function getCard($id)
   {
     $q = "SELECT * FROM `#__beursplein_cards` WHERE `id` = '{$id}'";
@@ -78,6 +91,10 @@ class BeurspleinModelCards extends JModel
     return $db->loadAssoc();
   }
   
+  /*
+   * Sorts the cards given by $deck per type
+   * @return array($type => array(cards));
+   */
   function sortCardsType($deck)
   {
     $sortedDeck = Array();
@@ -97,6 +114,10 @@ class BeurspleinModelCards extends JModel
    return $sortedDeck;
   }
   
+  /*
+   * Sorts the cards given by $deck per group
+   * @return array($group => array(cards));
+   */
   function sortCardsGroup($deck)
   {
     $sortedDeck = Array();
