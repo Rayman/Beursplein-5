@@ -69,6 +69,15 @@ class BeurspleinModelCards extends JModel
     return $db->loadAssocList();
   }
   
+  function getCard($id)
+  {
+    $q = "SELECT * FROM `#__beursplein_cards` WHERE `id` = '{$id}'";
+    $db = JFactory::getDBO();
+    $db->setQuery($q);
+    
+    return $db->loadAssoc();
+  }
+  
   function sortCardsType($deck)
   {
     $sortedDeck = Array();

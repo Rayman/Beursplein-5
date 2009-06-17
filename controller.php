@@ -220,7 +220,78 @@ class BeurspleinController extends JController
     {
       $this->setRedirect($link, $msg);
     }    
-  }  
+  }
+  
+  function selectcard()
+  {
+    
+    $error = false;
+    $msg   = "No msg set!";    
+    
+    $cardID = JRequest::getVar('card'  , '0', 'post');    
+    $cardID = (int)$cardID;
+    
+    if($cardID == 0)
+    {
+      $error = true;
+      $msg   = "Error, geen kaart geselecteerd";
+    }
+    else
+    {
+      //Look if that card is owned
+      $cardsModel = JController::getModel("Cards");
+      $card       = $cardsModel->getCard($cardID);
+      
+      $user    = JFactory::getUser();
+      $user_id = $user->id;
+      
+      if($card['user_id'] != $user_id)
+      {
+        $error = true;
+        $msg   = "Die kaart is niet van jou!";
+      }
+      else
+      {
+        //Check if card is not already played
+        if($card['status'] != 'deck')
+        {
+          $msg   = "Error, die kaart is al gespeeld";
+          $error = true;
+        }
+        else
+        {
+          //Selecteer dan maar
+          $user          = new stdClass;
+          $user->id      = $user_id;
+          $user->card_id = $cardID;
+          
+          $db = JFactory::getDBO();
+      
+          if (!$db->updateObject( '#__beursplein_users', $user, 'id' )) 
+          {
+            $msg = $db->stderr();
+            $error = true;
+          }
+          else
+          {
+            $msg   = "OK!";
+            $error = false;
+          } 
+        }
+      }
+    }
+    
+    $link = "index.php?option=com_beursplein&view=home";
+      
+    if($error)
+    {
+      $this->setRedirect($link, $msg, 'error');
+    }
+    else
+    {
+      $this->setRedirect($link, $msg);
+    }
+  }
   
   /**
    * save a record (and redirect to main page)
