@@ -27,18 +27,17 @@ class BeurspleinModelPortfolio extends JModel
       $id = $user->id;
     }
     
-    $db =& JFactory::getDBO();
-    
-    $query = "SELECT * FROM #__beursplein_portfolio WHERE owner='{$id}'";
+    $db =& JFactory::getDBO();    
+    $query = "SELECT * 
+              FROM ".$db->nameQuote('#__beursplein_portfolio')."
+              WHERE ".$db->nameQuote('owner')." = ".$db->quote($id);
     $db->setQuery( $query );
-    $list = $db->loadAssocList();
-    
-    return $list;
+    return $db->loadAssocList();
   }
   
   /**
   * Gets the stocks in a person's portfolio and adds the amounts together
-  * @return array with stocks + values
+  * @return array(stocks_id => amount)
   */
   function getStocksListTransformed($id = null)
   {
@@ -51,25 +50,26 @@ class BeurspleinModelPortfolio extends JModel
     //Get the user's stocks
     $list = $this->getStocksList($id);
     
+    //The return list
     $stockList = array();
     
     foreach($list as $stock)
     {
       if(isset($stockList[$stock['id']]))
       {
-  $stockList[$stock['id']]['amount'] += $stock['amount'];
+        $stockList[$stock['id']]['amount'] += $stock['amount'];
       }
       else
       {
-  $stockList[$stock['id']] = $stock;
-      }    
+        $stockList[$stock['id']] = $stock;
+      }
     }
     return $stockList;
   }
   
   /**
   * Gets all Stocks and add's the amounts together
-  * @return array with stock_id=>value
+  * @return array(stock_id => value)
   */
   function getTotalStocks()
   {
@@ -79,18 +79,19 @@ class BeurspleinModelPortfolio extends JModel
     $db->setQuery( $query );
     $list = $db->loadAssocList();
     
-    //Add all together
-    $stockList = array();    
+    //The return list
+    $stockList = array();
+    
     foreach($list as $stock)
     {
       if(isset($stockList[$stock['stock_id']]))
       {
-  $stockList[$stock['stock_id']]['amount'] += $stock['amount'];
+        $stockList[$stock['stock_id']]['amount'] += $stock['amount'];
       }
       else
       {
-  $stockList[$stock['stock_id']] = $stock;
-      }    
+        $stockList[$stock['stock_id']] = $stock;
+      }
     }
     
     return $stockList;
@@ -107,16 +108,16 @@ class BeurspleinModelPortfolio extends JModel
     {
       if(!$this->addStock($user_id, $stock_id, $amount, $msg))
       {
-  if(!isset($msg))
-  {
-    $db =& JFactory::getDBO();
-    $msg = "Er was een error: '".$db->getErrorMsg()."', '".$db->getQuery()."'";
-    return false;
-  }
-  else
-  {
-    return false;
-  }
+        if(!isset($msg))
+        {
+          $db =& JFactory::getDBO();
+          $msg = "Er was een error: '".$db->getErrorMsg()."', '".$db->getQuery()."'";
+          return false;
+        }
+        else
+        {
+          return false;
+        }
       }
     }
     
@@ -134,7 +135,11 @@ class BeurspleinModelPortfolio extends JModel
     {
       //Query for just bought stocks
       $db =& JFactory::getDBO();
-      $query = "SELECT id, amount FROM #__beursplein_portfolio WHERE owner='{$user_id}' AND stock_id='{$stock_id}' AND can_sell='2'";
+      $query = "SELECT ".$db->nameQuote('id').", ".$db->nameQuote('amount')."
+                FROM ".$db->nameQuote('#__beursplein_portfolio')."
+                WHERE ".$db->nameQuote('owner')." = ".$db->quote($user_id)."
+                AND ".$db->nameQuote('stock_id')." = ".$db->quote($stock_id)."
+                AND ".$db->nameQuote('can_sell')." = ".$db->quote(2);
       $db->setQuery( $query );
       $db->query();
       
@@ -147,8 +152,8 @@ class BeurspleinModelPortfolio extends JModel
         $stock->stock_id = $stock_id;
         $stock->amount   = $amount;
         $stock->can_sell = 2;
-                
-        if(!$db->insertObject("#__beursplein_portfolio", $stock))
+        
+        if(!$db->insertObject('#__beursplein_portfolio', $stock))
         {
           return false;
         }
@@ -160,7 +165,7 @@ class BeurspleinModelPortfolio extends JModel
         $stock->id     = $row['id'];
         $stock->amount = $row['amount'] + $amount;
         
-        if(false === $db->updateObject( '#__beursplein_portfolio', $stock, 'id' ))
+        if(false === $db->updateObject('#__beursplein_portfolio', $stock, 'id' ))
         {
           return false;
         }
@@ -174,7 +179,11 @@ class BeurspleinModelPortfolio extends JModel
     {
       //Query for stocks bought a long time ago
       $db =& JFactory::getDBO();
-      $query = "SELECT id, amount FROM #__beursplein_portfolio WHERE owner='{$user_id}' AND stock_id='{$stock_id}' AND can_sell='0'";
+      $query = "SELECT ".$db->nameQuote('id').", ".$db->nameQuote('amount')."
+                FROM   ".$db->nameQuote('#__beursplein_portfolio')."
+                WHERE  ".$db->nameQuote('owner')."    = ".$db->quote($user_id)." 
+                AND    ".$db->nameQuote('stock_id')." = ".$db->quote($stock_id)."
+                AND    ".$db->nameQuote('can_sell')." = ".$db->quote(0);
       $db->setQuery( $query );
       $db->query();
       
@@ -182,7 +191,7 @@ class BeurspleinModelPortfolio extends JModel
       
       if($numrows==0)
       {
-        $msg = "Je hebt geen aandelen van type {$stock_id} om te verkopen";
+        $msg = "Je hebt geen aandelen van id='{$stock_id}' om te verkopen";
         return false;
       }
       else
@@ -191,7 +200,7 @@ class BeurspleinModelPortfolio extends JModel
         
         if($row['amount'] < - $amount) //Amount is negative
         {
-          $msg = "Je kunt maximaal {$row['amount']} aandelen van het type {$stock_id} verkopen";
+          $msg = "Je kunt maximaal {$row['amount']} aandelen met id='{$stock_id}' verkopen";
           return false;
         }  
         

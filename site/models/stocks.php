@@ -21,7 +21,7 @@ class BeurspleinModelStocks extends JModel
   {
     $db =& JFactory::getDBO();
 
-    $query = 'SELECT * FROM #__beursplein_stocks';
+    $query = "SELECT * FROM ".$db->nameQuote('#__beursplein_stocks');
     $db->setQuery( $query );
     $list = $db->loadAssocList();
 
@@ -37,7 +37,8 @@ class BeurspleinModelStocks extends JModel
     $db =& JFactory::getDBO();
     
     //Get the prices
-    $query = "SELECT id, value FROM #__beursplein_stocks";
+    $query = "SELECT ".$db->nameQuote('id').", ".$db->nameQuote('value')." 
+              FROM ".$db->nameQuote('#__beursplein_stocks');
     $db->setQuery( $query );
     $db->query();
     $result = $db->loadAssocList();
@@ -47,7 +48,7 @@ class BeurspleinModelStocks extends JModel
     foreach($result as $stock)
     {
       $stockList[$stock['id']] = $stock['value'];
-    }    
+    }
     
     return $stockList;
   }

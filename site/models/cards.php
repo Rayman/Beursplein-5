@@ -58,8 +58,11 @@ class BeurspleinModelCards extends JModel
      $user = JFactory::getUser();
      $id   = $user->id;
     }
-    $q = "SELECT * FROM `#__beursplein_cards` WHERE `user_id` = '$id'";
+    
     $db = JFactory::getDBO();
+    $q = "SELECT * 
+          FROM  ".$db->nameQuote('#__beursplein_cards')."
+          WHERE ".$db->nameQuote('user_id')." = ".$db->quote($id);
     $db->setQuery($q);
     
     return $db->loadAssocList();
@@ -71,8 +74,10 @@ class BeurspleinModelCards extends JModel
     */
   function getDeckCards()
   {
-    $q = "SELECT * FROM `#__beursplein_cards` WHERE `user_id` IS NULL";
     $db = JFactory::getDBO();
+    $q = "SELECT * 
+          FROM ".$db->nameQuote('#__beursplein_cards')."
+          WHERE ".$db->nameQuote('user_id')." IS NULL";
     $db->setQuery($q);
     
     return $db->loadAssocList();
@@ -84,8 +89,10 @@ class BeurspleinModelCards extends JModel
     */
   function getCard($id)
   {
-    $q = "SELECT * FROM `#__beursplein_cards` WHERE `id` = '{$id}'";
     $db = JFactory::getDBO();
+    $q = "SELECT * 
+          FROM ".$db->nameQuote('#__beursplein_cards')."
+          WHERE ".$db->nameQuote('id')." = ".$db->quote($id);
     $db->setQuery($q);
     
     return $db->loadAssoc();

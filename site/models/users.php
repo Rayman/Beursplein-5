@@ -26,9 +26,12 @@ class BeurspleinModelUsers extends JModel
     }
     
     $db =& JFactory::getDBO();
-    $query = "SELECT money FROM #__beursplein_users WHERE id=".$db->Quote("$id");
+    $query = "SELECT ".$db->nameQuote('money')." 
+              FROM ".$db->nameQuote('#__beursplein_users')." 
+              WHERE id=".$db->Quote($id);
     $db->setQuery( $query );
     $db->query();
+    
     if($db->getNumRows()!=1)
     {
       jexit("User not found");
@@ -50,7 +53,7 @@ class BeurspleinModelUsers extends JModel
     $user->money = $money;
     
     //void updateObject  (string $table, object &$object, string $keyName, [boolean $updateNulls = true]) 
-    if (!$db->updateObject( '#__beursplein_users', $user, 'id' ))
+    if (!$db->updateObject('#__beursplein_users', $user, 'id' ))
     {
       return false;
     }
@@ -72,9 +75,11 @@ class BeurspleinModelUsers extends JModel
       $id   = $user->id;
     }
     
-    $q = "SELECT `card_id` FROM `#__beursplein_users` WHERE `id` = '{$id}'";
     $db = JFactory::getDBO();
+    $q = "SELECT `card_id` 
+          FROM ".$db->nameQuote('#__beursplein_users')." 
+          WHERE ".$db->nameQuote('id')." = ".$db->quote($id);
     $db->setQuery($q);
-    return $db->loadResult(); 
+    return $db->loadResult();
   }
 }
