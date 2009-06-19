@@ -57,11 +57,11 @@ class BeurspleinModelPortfolio extends JModel
     {
       if(isset($stockList[$stock['id']]))
       {
-	$stockList[$stock['id']]['amount'] += $stock['amount'];
+  $stockList[$stock['id']]['amount'] += $stock['amount'];
       }
       else
       {
-	$stockList[$stock['id']] = $stock;
+  $stockList[$stock['id']] = $stock;
       }    
     }
     return $stockList;
@@ -85,11 +85,11 @@ class BeurspleinModelPortfolio extends JModel
     {
       if(isset($stockList[$stock['stock_id']]))
       {
-	$stockList[$stock['stock_id']]['amount'] += $stock['amount'];
+  $stockList[$stock['stock_id']]['amount'] += $stock['amount'];
       }
       else
       {
-	$stockList[$stock['stock_id']] = $stock;
+  $stockList[$stock['stock_id']] = $stock;
       }    
     }
     
@@ -101,22 +101,22 @@ class BeurspleinModelPortfolio extends JModel
    * @return if success
    */
   function addStocks($user_id, $stocks, &$msg)
-  {    
+  {
     //Add the stock to the table
     foreach($stocks as $stock_id => $amount)
     {
       if(!$this->addStock($user_id, $stock_id, $amount, $msg))
       {
-	if(!isset($msg))
-	{
-	  $db =& JFactory::getDBO();
-	  $msg = "Er was een error: '".$db->getErrorMsg()."', '".$db->getQuery()."'";
-	  return false;
-	}
-	else
-	{
-	  return false;
-	}
+  if(!isset($msg))
+  {
+    $db =& JFactory::getDBO();
+    $msg = "Er was een error: '".$db->getErrorMsg()."', '".$db->getQuery()."'";
+    return false;
+  }
+  else
+  {
+    return false;
+  }
       }
     }
     
@@ -131,7 +131,7 @@ class BeurspleinModelPortfolio extends JModel
   function addStock($user_id, $stock_id, $amount, &$msg)
   {
     if($amount>0) // BUY
-    {            
+    {
       //Query for just bought stocks
       $db =& JFactory::getDBO();
       $query = "SELECT id, amount FROM #__beursplein_portfolio WHERE owner='{$user_id}' AND stock_id='{$stock_id}' AND can_sell='2'";
@@ -142,10 +142,6 @@ class BeurspleinModelPortfolio extends JModel
       
       if($numrows==0) //Case 1: Create a new entry
       {
-        //$query = "
-        //  INSERT INTO ".$db->nameQuote("jos_beursplein_portfolio")."
-        //  ( ".$db->nameQuote('owner').",  ".$db->nameQuote('stock_id').",  ".$db->nameQuote('amount').",  ".$db->nameQuote('can_sell')." ) VALUES 
-        //  ( ".$db->Quote("$id").",     ".$db->Quote("$stockId").",   ".$db->Quote("$value").",     ".$db->Quote("2").")";  
         $stock = new stdClass;
         $stock->owner    = $user_id;
         $stock->stock_id = $stock_id;
@@ -154,8 +150,8 @@ class BeurspleinModelPortfolio extends JModel
                 
         if(!$db->insertObject("#__beursplein_portfolio", $stock))
         {
-	  return false;
-        }            
+          return false;
+        }
       }
       elseif($numrows==1) //Case 2: Update it
       {
@@ -167,12 +163,12 @@ class BeurspleinModelPortfolio extends JModel
         if(false === $db->updateObject( '#__beursplein_portfolio', $stock, 'id' ))
         {
           return false;
-        }    
+        }
       }
       else
       {
         jexit("Corrupt database!!!");
-      }      
+      }
     }
     elseif($amount<0) //SELL
     {
@@ -186,30 +182,30 @@ class BeurspleinModelPortfolio extends JModel
       
       if($numrows==0)
       {
-	$msg = "Je hebt geen aandelen van type {$stock_id} om te verkopen";
-	return false;
+        $msg = "Je hebt geen aandelen van type {$stock_id} om te verkopen";
+        return false;
       }
       else
       {
-	$row = $db->loadAssoc();
-	
-	if($row['amount'] < - $amount) //Amount is negative
-	{
-	  $msg = "Je kunt maximaal {$row['amount']} aandelen van het type {$stock_id} verkopen";
-	  return false;
-	}	
-	
-	$stock = new stdClass;
-	$stock->id     = $row['id'];
-	$stock->amount = $row['amount'] + $amount; //Amount is negative
-	
-	if(false === $db->updateObject( '#__beursplein_portfolio', $stock, 'id' ))
-	{
-	  return false;
-	}    
+        $row = $db->loadAssoc();
+        
+        if($row['amount'] < - $amount) //Amount is negative
+        {
+          $msg = "Je kunt maximaal {$row['amount']} aandelen van het type {$stock_id} verkopen";
+          return false;
+        }  
+        
+        $stock = new stdClass;
+        $stock->id     = $row['id'];
+        $stock->amount = $row['amount'] + $amount; //Amount is negative
+        
+        if(false === $db->updateObject( '#__beursplein_portfolio', $stock, 'id' ))
+        {
+          return false;
+        }
       }
-    }  
-    return true;  
+    }
+    return true;
   }
   
   /**
@@ -222,7 +218,7 @@ class BeurspleinModelPortfolio extends JModel
     $returnStocks = array();
     
     foreach($stocks as $id => $value)
-    {      
+    {
       //We expect an int
       $id    = (int)$id;
       $value = (int)$value;
@@ -233,6 +229,7 @@ class BeurspleinModelPortfolio extends JModel
       }
       
       if($value < 0) //Error
+      {
         $msg = "Geen negatieve getallen plx";
         return false;
       }    
@@ -268,6 +265,6 @@ class BeurspleinModelPortfolio extends JModel
     }
     
     return $returnStocks;
-  }  
+  }
 }
 
