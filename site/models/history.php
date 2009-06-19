@@ -13,5 +13,16 @@ jimport( 'joomla.application.component.model' );
  */
 class BeurspleinModelHistory extends JModel
 {
- 
+  function getHistory($stock_id, $limit = 20)
+  {
+    $limit = (int)$limit;
+    $db = JFactory::getDBO();
+    $q  = "SELECT *
+           FROM ".$db->nameQuote('#__beursplein_history')."
+           WHERE ".$db->nameQuote('stock_id')." = ".$db->quote($stock_id)."
+           LIMIT 0 , ".$limit;
+    $db->setQuery($q);
+    
+    return $db->loadAssocList();
+  }
 }
