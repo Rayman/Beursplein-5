@@ -13,11 +13,18 @@ jimport( 'joomla.application.component.view');
 class BeurspleinViewStocks extends JView
 {
   function display($tpl = null)
-  {    
-    $stocksList  = $this->get( 'StocksList', 'Stocks' );    
+  {
+    //Get the stocks
+    $stocksList  = $this->get( 'StocksList', 'Stocks' );
+    //Get all bought stocks
     $totalStocks = $this->get( 'TotalStocks', 'Portfolio');
     
+    //Get the users stocks
     $list = $this->get( 'StocksList', 'Portfolio');
+    
+    //TODO:
+    //Combine these, so only 1 query has to be done
+    
     //Transform the userStocks
     $userStocks = array();
     foreach($list as $stock)
