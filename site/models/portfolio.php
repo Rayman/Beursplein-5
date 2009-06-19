@@ -214,53 +214,60 @@ class BeurspleinModelPortfolio extends JModel
   
   /**
    * Parses 2 html-post variables and checks them on errors
-   * @return array with stocks + amounts
+   * @return array with stocks + amounts, false on error
    */
   function parseStocks($stocks, $options, &$msg)
   {
-    //Parse the options
+    //The return array
     $returnStocks = array();
     
     foreach($stocks as $id => $value)
-    {
+    {      
+      //We expect an int
+      $id    = (int)$id;
       $value = (int)$value;
       
-      if($value == "0")
+      if($value == 0) //Stock didn't change, so we don't do anything with it
       {
         continue;
       }
-      if(((int)$value)<0)
-      {
+      
+      if($value < 0) //Error
         $msg = "Geen negatieve getallen plx";
         return false;
       }    
-      if(!isset($options[$id]))
+      
+      if(!isset($options[$id])) //Error, option not set
       {
-        $msg = "Error, je hebt een optie niet aangevinkt. ID: '$id', VALUE: '{$value}'";
+        $msg = "Error, je hebt een optie niet aangevinkt. 
+          ID: '{$id}', VALUE: '{$value}'";
         return false;
       }
-      if($options[$id]=="Buy")
+      
+      if($options[$id] == "Buy")
       {
-        $amount = (int)$value;
+        $amount = $value;
       }
       elseif($options[$id]=="Sell")
       {
-        $amount = -(int)$value;
+        $amount = - $value;
       }
       else
       {
         $msg = "Error, wrong option";
         return false;
       }
-      if(((int)$id)==0)
+      
+      if($id == 0)
       {
         $msg = "Error, wrong ID";
         return false;
       }        
       
-      $returnStocks[(int)$id] = $amount;
+      $returnStocks[$id] = $amount;
     }
     
     return $returnStocks;
   }  
 }
+

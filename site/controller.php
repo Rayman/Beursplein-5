@@ -23,46 +23,47 @@ class BeurspleinController extends JController
   }
 
   /**
-   * The default task, so display home
+   * The default task,
+   * Add the required models and display the view
    */
   function Display()
   {
-    //Get the models
+    //Get the models that all views need
     $stocksModel    = JController::getModel("Stocks");
     $portfolioModel = JController::getModel("Portfolio");
     $userModel      = JController::getModel("Users");
-    $cardsModel     = JController::getModel("Cards");
 
     //Get the view
     $viewName = JRequest::getVar('view');
     $view     = JController::getView($viewName,'html');
 
-    //Add the models to the view
+    //Add the models every view needs
     $view->setModel($stocksModel);
     $view->setModel($portfolioModel);
     $view->setModel($userModel);
+    
+    //Some additional models
+    if($viewName=="history") $view->setModel(JController::getModel("History"));
+    if($viewName=='dealcards' || $viewName=='home')
+       $view->setModel(JController::getModel("Cards"));
 
-    if($viewName=="history")   $view->setModel(JController::getModel("History"));
-    if($viewName=='dealcards') $view->setModel(JController::getModel("Cards"));
-    if($viewName=='home')      $view->setModel(JController::getModel("Cards"));
-
-    //Display it
+    //Display the view
     $view->display();
   }
 
   /**
-   * display the current values of the stocks
-   * @return stocks array
+   * Buys and sells all stocks that are posted
    */
   function buysell()
   {
-    $stocks  = JRequest::getVar('stock'  , 'default value goes here', 'post');
-    $options = JRequest::getVar('options', 'default value goes here', 'post');
-
+    $stocks  = JRequest::getVar('stock'  , null, 'post');
+    $options = JRequest::getVar('options', null, 'post');
+    
+    //If the message isn't set, display this
     $msg = "Error, message not set";
     $error = false;
 
-    if(!is_array($stocks)||!is_array($options))
+    if(!is_array($stocks) || !is_array($options))
     {
       $msg = "Je hebt niks gekocht/verkocht";
       $error = false;
@@ -75,6 +76,7 @@ class BeurspleinController extends JController
       //Parse the stocks + options
       $stocks = $portfolioModel->parseStocks($stocks, $options, $msg);
 
+      //If false, there was an error, message is already set
       if($stocks === false)
       {
         $error = true;
@@ -109,15 +111,15 @@ class BeurspleinController extends JController
           if($portfolioModel->addStocks($user_id, $stocks, $msg))
           {
             //Update the money
-	    if($userModel->setMoney($user_id, $money - $totalValue))
-	    {
-	      $error = false;
-	    }
-	    else
-	    {
-	      $error = true;
-	      $msg = "Error, je geld is niet geupdated";
-	    }
+	          if($userModel->setMoney($user_id, $money - $totalValue))
+	          {
+	            $error = false;
+	          }
+	          else
+	          {
+	            $error = true;
+	            $msg = "Error, je geld is niet geupdated";
+	          }
           }
           else
           {
@@ -208,28 +210,21 @@ class BeurspleinController extends JController
     }
     
     $link = "index.php?option=com_beursplein&view=home";
-    
-    $error = false;
     $msg   = "Je hebt nieuwe kaarten gekregen";
-
-    if($error)
-    {
-      $this->setRedirect($link, $msg, 'error');
-    }
-    else
-    {
-      $this->setRedirect($link, $msg);
-    }    
+    $this->setRedirect($link, $msg);   
   }
   
+  /*
+   * Select the card so next reset, it gets played
+   */
   function selectcard()
   {
-    
-    $error = false;
+    //If msg is not set, display this
+    $error = true;
     $msg   = "No msg set!";    
     
-    $cardID = JRequest::getVar('card'  , '0', 'post');    
-    $cardID = (int)$cardID;
+    //Expect an int
+    $cardID = JRequest::getInt('card'  , 0, 'post');
     
     if($cardID == 0)
     {
@@ -239,12 +234,16 @@ class BeurspleinController extends JController
     else
     {
       //Look if that card is owned
+      
+      //First get the card
       $cardsModel = JController::getModel("Cards");
       $card       = $cardsModel->getCard($cardID);
       
+      //Get the user_id
       $user    = JFactory::getUser();
       $user_id = $user->id;
       
+      //Check if you own this card
       if($card['user_id'] != $user_id)
       {
         $error = true;
@@ -292,50 +291,5 @@ class BeurspleinController extends JController
       $this->setRedirect($link, $msg);
     }
   }
-  
-  /**
-   * save a record (and redirect to main page)
-   * @return void
-   *
-  function playcard()
-  {
-    //$model = $this->getModel('hello');
-    //
-    //if ($model->store($post)) {
-    //  $msg = JText::_( 'Greeting Saved!' );
-    //} else {
-    //  $msg = JText::_( 'Error Saving Greeting' );
-    //}
-
-    // Check the table in so it can be edited.... we are done with it anyway
-    //$link = 'index.php?option=com_hello';
-    //$this->setRedirect($link, $msg);
-  }
-
-  /**
-   * remove record(s)
-   * @return void
-   *
-  function remove()
-  {
-    $model = $this->getModel('hello');
-    if(!$model->delete()) {
-      $msg = JText::_( 'Error: One or More Greetings Could not be Deleted' );
-    } else {
-      $msg = JText::_( 'Greeting(s) Deleted' );
-    }
-
-    $this->setRedirect( 'index.php?option=com_hello', $msg );
-  }*/
-
-  /**
-   * cancel editing a record
-   * @return void
-   *
-  function cancel()
-  {
-    $msg = JText::_( 'Operation Cancelled' );
-    $this->setRedirect( 'index.php?option=com_hello', $msg );
-  }*/
 }
 
