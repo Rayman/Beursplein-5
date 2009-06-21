@@ -18,66 +18,10 @@ class BeurspleinViewHome extends JView
     $this->assignRef( 'stocksTable', $stocksTable );
     $this->assignRef( 'totalValue', $totalValue);
     
-    $this->buildCardsTable($cardsTable);
-    $this->assignRef( 'cardsTable', $cardsTable );
-    
     $money = $this->get( 'Money', 'Users' );
     $this->assignRef( 'money', $money );
     
     parent::display($tpl);
-  }
-  
-  function buildCardsTable(&$cardsTable)
-  {
-    $cardsTable = "";
-    
-    $cardsList = $this->get('UserCards', 'Cards');
-    if(count($cardsList)==0)
-    {
-      $cardsTable  = "<form action=\"index.php?option=com_beursplein&amp;task=getcards\" ".
-          "method=\"post\">\r\n";
-      $cardsTable .= "\t<input type=\"submit\" name=\"getstocks\" value=\"Click hier om ".
-          "kaarten uitegedeeld te krijgen\" />\r\n";
-      $cardsTable .= "</form>\r\n";
-      return;
-    }
-    
-    $selectedCard = $this->get('SelectedCard', 'Users');
-    
-    $cardsTable = "<form action=\"index.php?option=com_beursplein&amp;task=selectcard\" method=\"post\">\r\n\r\n<table>\r\n";
-    $counter    = 0;
-    
-    foreach($cardsList as $card)
-    {
-      if($counter%5==0)
-        $cardsTable .= "\t<tr>\r\n";
-      
-      $images = explode(",", $card['images']);
-      if(count($images)!=4)
-        exit("Error, geen 4 images");
-      
-      if($card['id']==$selectedCard)
-        $cardsTable .= "\t\t<td>\r\n\t\t\t<table border=\"1\" style=\"background: yellow;\">\r\n\t\t\t\t<tr>\r\n";
-      else
-        $cardsTable .= "\t\t<td>\r\n\t\t\t<table border=\"1\">\r\n\t\t\t\t<tr>\r\n";
-      $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[0]}\" alt=\"\" height=\"40\" /></td>\r\n";
-      $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[1]}\" alt=\"\" height=\"40\" /></td>\r\n";
-      $cardsTable .= "\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n";      
-      $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[2]}\" alt=\"\" height=\"40\" /></td>\r\n";
-      $cardsTable .= "\t\t\t\t\t<td><img src=\"{$images[3]}\" alt=\"\" height=\"40\" /></td>\r\n";
-      $cardsTable .= "\t\t\t\t</tr>\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t";
-      if($card['id']==$selectedCard)
-        $cardsTable .= "<td><input type=\"radio\" name=\"card\" value=\"{$card['id']}\" checked=\"checked\"/></td>\r\n";
-      else
-        $cardsTable .= "<td><input type=\"radio\" name=\"card\" value=\"{$card['id']}\" /></td>\r\n";
-      $cardsTable .= "\t\t\t\t</tr>\r\n\t\t\t</table>\r\n\t\t</td>\r\n";
-      
-      if($counter%5==4)
-          $cardsTable .= "\t</tr>\r\n";
-      
-      $counter++;
-    }
-    $cardsTable .= "</table>\r\n<input type=\"submit\" value=\"Selecteer Kaart!\" />\r\n</form>\r\n";
   }
   
   function buildStocksTable(&$stocksTable, &$totalValue)
