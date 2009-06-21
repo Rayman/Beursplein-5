@@ -90,7 +90,26 @@ else
   }
 ?>
   </table>
-  <input type="submit" value="Selecteer Kaart!" />
+  <select name="stock">
+<?php
+    $stockList     = $this->get('StocksList', 'Stocks');
+    $selectedStock = $this->get('SelectedStock', 'Users');
+    
+    foreach($stockList as $stock)
+    {?>
+    <option value="<?php
+        echo $stock['id']; echo '"';
+      if($stock['id'] == $selectedStock)
+      {
+        echo ' selected="selected"';
+      }
+      echo '>';
+      echo $stock['name'];
+      echo "</option>\r\n";
+    }
+?>
+  </select>
+  <input type="submit" value="Update je Keuze!" />
 </form>
 <?php
 }

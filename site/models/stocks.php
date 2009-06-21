@@ -52,4 +52,17 @@ class BeurspleinModelStocks extends JModel
     
     return $stockList;
   }
+  
+  function getStock($id)
+  {
+    $db =& JFactory::getDBO();
+    
+    //Get the prices
+    $query = "SELECT * 
+              FROM  ".$db->nameQuote('#__beursplein_stocks')." 
+              WHERE ".$db->nameQuote('id')." = ".$db->quote($id);
+    $db->setQuery( $query );
+    $db->query();
+    return $db->loadAssoc();
+  }
 }

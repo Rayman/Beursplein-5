@@ -136,10 +136,10 @@ class BeurspleinModelPortfolio extends JModel
       //Query for just bought stocks
       $db =& JFactory::getDBO();
       $query = "SELECT ".$db->nameQuote('id').", ".$db->nameQuote('amount')."
-                FROM ".$db->nameQuote('#__beursplein_portfolio')."
-                WHERE ".$db->nameQuote('owner')." = ".$db->quote($user_id)."
-                AND ".$db->nameQuote('stock_id')." = ".$db->quote($stock_id)."
-                AND ".$db->nameQuote('can_sell')." = ".$db->quote(2);
+                FROM   ".$db->nameQuote('#__beursplein_portfolio')."
+                WHERE  ".$db->nameQuote('owner')."    = ".$db->quote($user_id)."
+                AND    ".$db->nameQuote('stock_id')." = ".$db->quote($stock_id)."
+                AND    ".$db->nameQuote('can_sell')." = ".$db->quote(2);
       $db->setQuery( $query );
       $db->query();
       
@@ -214,6 +214,9 @@ class BeurspleinModelPortfolio extends JModel
         }
       }
     }
+    
+    
+    
     return true;
   }
   
@@ -274,6 +277,19 @@ class BeurspleinModelPortfolio extends JModel
     }
     
     return $returnStocks;
+  }
+  
+  /*
+   * Deletes all stocks with amount == 0 from db
+   */
+  function deleteEmptyStocks()
+  {
+    $db = JFactory::getDBO();
+    $q  = "DELETE
+           FROM ".$db->nameQuote('#__beursplein_portfolio')." 
+           WHERE ".$db->nameQuote('amount')." = ".$db->quote(0);
+    $db->setQuery;
+    return $db->query();
   }
 }
 

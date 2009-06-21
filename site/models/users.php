@@ -76,10 +76,69 @@ class BeurspleinModelUsers extends JModel
     }
     
     $db = JFactory::getDBO();
-    $q = "SELECT `card_id` 
-          FROM ".$db->nameQuote('#__beursplein_users')." 
-          WHERE ".$db->nameQuote('id')." = ".$db->quote($id);
+    $q = "SELECT ".$db->nameQuote('card_id')." 
+          FROM   ".$db->nameQuote('#__beursplein_users')." 
+          WHERE  ".$db->nameQuote('id')." = ".$db->quote($id);
     $db->setQuery($q);
     return $db->loadResult();
+  }
+  
+  function getSelectedStock($id = null)
+  {
+    if($id==null)
+    {
+      $user = JFactory::getUser();
+      $id   = $user->id;
+    }
+      
+    $db = JFactory::getDBO();
+    $q = "SELECT ".$db->nameQuote('stock_id')." 
+          FROM   ".$db->nameQuote('#__beursplein_users')." 
+          WHERE  ".$db->nameQuote('id')." = ".$db->quote($id);
+    $db->setQuery($q);
+    
+    return $db->loadResult();
+  }
+  
+  function selectCard($cardID, $user_id, &$msg)
+  {
+    //Selecteer dan maar
+    $user          = new stdClass;
+    $user->id      = $user_id;
+    $user->card_id = $cardID;
+    
+    $db = JFactory::getDBO();
+    
+    if (!$db->updateObject( '#__beursplein_users', $user, 'id' )) 
+    {
+      $msg = $db->stderr();
+      return false;
+    }
+    else
+    {
+      $msg   = "OK!";
+      return true;
+    } 
+  }
+  
+  function selectStock($stock_id, $user_id, &$msg)
+  { 
+    //Selecteer dan maar
+    $user           = new stdClass;
+    $user->id       = $user_id;
+    $user->stock_id = $stock_id;
+    
+    $db = JFactory::getDBO();
+    
+    if (!$db->updateObject( '#__beursplein_users', $user, 'id' )) 
+    {
+      $msg = $db->stderr();
+      return false;
+    }
+    else
+    {
+      $msg   = "OK!";
+      return true;
+    } 
   }
 }

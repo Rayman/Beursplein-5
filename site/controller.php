@@ -98,7 +98,7 @@ class BeurspleinController extends JController
         //Check if money is enough
         foreach($stocks as $stock_id => $amount)
         {
-	        $totalValue += $amount * $priceList[$stock_id];
+	  $totalValue += $amount * $priceList[$stock_id];
         }
         if($totalValue>$money)
         {
@@ -111,15 +111,23 @@ class BeurspleinController extends JController
           if($portfolioModel->addStocks($user_id, $stocks, $msg))
           {
             //Update the money
-	          if($userModel->setMoney($user_id, $money - $totalValue))
-	          {
-	            $error = false;
-	          }
-	          else
-	          {
-	            $error = true;
-	            $msg = "Error, je geld is niet geupdated";
-	          }
+            if($userModel->setMoney($user_id, $money - $totalValue))
+            {
+              if(!$portfolioModel->deleteEmptyStocks())
+              {
+                $error = true;
+                $msg   = "Can not delete old records!";
+              }
+              else
+              {
+                $error = false;
+              }
+            }
+            else
+            {
+              $error = true;
+              $msg = "Error, je geld is niet geupdated";
+            }
           }
           else
           {
@@ -259,29 +267,36 @@ class BeurspleinController extends JController
         }
         else
         {
-          //Selecteer dan maar
-          $user          = new stdClass;
-          $user->id      = $user_id;
-          $user->card_id = $cardID;
-          
-          $db = JFactory::getDBO();
+          $userModel = $this->getModel('Users');
+          $error = !$userModel->selectCard($cardID, $user_id, $msg);
+        }
+      }
+    }
+    
+    if(!$error)
+    {
+      $stockID = JRequest::getInt('stock'  , 0, 'post');
       
-          if (!$db->updateObject( '#__beursplein_users', $user, 'id' )) 
-          {
-            $msg = $db->stderr();
-            $error = true;
-          }
-          else
-          {
-            $msg   = "OK!";
-            $error = false;
-          } 
+      if($stockID != 0)
+      {
+        $stocksModel = $this->getModel('Stocks');
+        $stock = $stocksModel->getStock($stockID);
+        
+        if(!is_array($stock))
+        {
+          $error = true;
+          $msg   = "Dat aandeel bestaat niet";
+        }
+        else
+        {
+          $userModel = $this->getModel('Users');
+          $error = !$userModel->selectStock($stockID, $user_id, $msg);
         }
       }
     }
     
     $link = "index.php?option=com_beursplein&view=home";
-      
+    
     if($error)
     {
       $this->setRedirect($link, $msg, 'error');
