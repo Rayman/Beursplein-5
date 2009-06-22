@@ -3,13 +3,89 @@ defined('_JEXEC') or die('Restricted access');?>
 
 <h1>Welkom <?php echo $this->username;?> op het Beursplein 5</h1>
 
+<?php
+if(count($this->userStocks)==0)
+{?>
+<p>
+  Je hebt nog geen aandelen, ga naar Aandelen om ze te kopen
+</p>
+<?php }
+else
+{?>
 <p>
   Dit zijn je aandelen:
 </p>
-  <?php echo $this->stocksTable;?>
+<table border="1" style="border-collapse: collapse;">
+  <tr>
+    <th>Soort</th>
+    <th>Verandering</th>
+  </tr>
+<?php 
+  $totalValue = 0;
+  $stockList = $this->stockList;
+  foreach($this->userStocks as $stock)
+  {
+    //get the stock info
+    $stockInfo = $stockList[$stock['stock_id']];
+    
+    //Update totalValue
+    $totalValue += $stockInfo['value']*$stock['amount'];
+?>
+  <tr>
+    <td>
+      <?php 
+    echo $stock['amount'];
+    echo ' x ';
+    echo JHTML::Image($stockInfo['image'], $stockInfo['name'], Array('height'=>20));
+?>
+
+    </td>
+<?php
+    //Verandering      
+    //Color
+    if($stockInfo['change']>0)
+    {
+      $color = "green";
+    }
+    elseif($stockInfo['change']<0)
+    {
+      $color = "red";
+    }
+    else
+    {
+      $color = "blue";
+    }
+    
+    //Change in %
+    $changep = round(((float)$stockInfo['change'])/((float)$stockInfo['value'])*100);
+    
+    //Add the '+' sign
+    $changep = $stockInfo['change'] >= 0 ? "+".(string)$changep             : $changep;
+    $change  = $stockInfo['change'] >= 0 ? "+".(string)$stockInfo['change'] : $stockInfo['change'];
+?>
+    <td>
+      <span style="color: <?php 
+    echo $color;
+    echo '">';
+    echo $change;
+    echo ' (';
+    echo $changep;
+    echo '%)';?>
+</span>
+    </td>    
+  </tr>
+<?php 
+  }
+?>
+</table>
+<?php
+}
+?>
+
 <p>
   Totale waarde aandelen pakket: &euro;<?php echo $this->totalValue;?><br />
   Liquide middelen voor transactie: &euro;<?php echo $this->money;?>
+
 </p>
 <h2>Handels log</h2>
 <p>
@@ -49,12 +125,12 @@ else
       exit("Error, geen 4 images");
 ?>
       <td>
-        <table border="1"<?php
+        <table border="1" style="border-collapse: collapse;<?php
           if($card['id']==$selectedCard)
           {
-            ?> style="background: yellow;"<?php
+            echo ' background: yellow;';
           }
-          ?>>
+          ?>">
           <tr>
             <td><img src="<?php echo $images[0];?>" alt="" height="40" /></td>
             <td><img src="<?php echo $images[1];?>" alt="" height="40" /></td>
