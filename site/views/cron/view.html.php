@@ -15,7 +15,7 @@ class BeurspleinViewCron extends JView
   function display($tpl = null)
   {
     $this->updateCanSell();
-    
+    $this->updateStocks();
     
     parent::display($tpl);
   }
@@ -105,26 +105,26 @@ class BeurspleinViewCron extends JView
     echo $q;
     
     $this->dispResult($db->query());
-    
-    
-    
-    exit();
-    $this->disp("<h4>Updating Stocks</h4>");
+  }
+  
+  function updateStocks()
+  { 
+    $this->disp("<br /><h4>Updating Stocks</h4>");
     
     //Process the cards...
-    $result = $this->q("SELECT * FROM `jos_beursplein_stocks`");
-    $stocks = array();
-    while($row = mysql_fetch_assoc($result))
-    {
-      $stocks[$row['id']] = $row;
-    }
+    
+    $db = JFactory::getDBO();
+    
+    $q = "SELECT * FROM `#__beursplein_stocks`";
+    $db->setQuery($q);
+    $stockList = $db->loadAssocList();
     
     //TODO
     //Process the cards
     //
     
     //Add some random
-    foreach($stocks as $id => $stock)
+        foreach($stockList as $stock)
     {
       $old_value = $stock['value'];
       
@@ -156,21 +156,50 @@ class BeurspleinViewCron extends JView
       }
       
       $change = $stock['value'] - $old_value;
+      
+      $entry = new stdClass;
+      $entry->value = $stock['value'];
+      $entry->change = $change;
+      $entry->speed = $stock['speed'];
+      $entry->growing = $stock['growing'];
+      $entry->id = $stock['id'];
+      
+      $result = $db->updateObject('#__beursplein_stocks', $entry, 'id');
+      echo $db->getQuery();
+      $this->dispResult($result);
+      
+      /*
       $this->q("UPDATE `jos_beursplein_stocks`
         SET `value` = '{$stock['value']}',
         `change` = '{$change}',
         `speed` = '{$stock['speed']}',
         `growing` = '{$stock['growing']}'
-        WHERE `id` ='{$stock['id']}' LIMIT 1");
+        WHERE `id` ='{$stock['id']}' LIMIT 1");*/
       
-      $r = $this->q("SELECT `amount` FROM `jos_beursplein_portfolio` WHERE `stock_id`='{$stock['id']}'");
+      $q = "SELECT `amount` 
+          FROM `#__beursplein_portfolio` 
+          WHERE `stock_id` = '{$stock['id']}'";
+      $db->setQuery($q);
+      $this->disp($db->getQuery());
+      $amountList = $db->loadAssocList();
+      
+      //Add the amounts
       $sum = 0;
-      while($row = mysql_fetch_assoc($r))
+      foreach($amountList as $row)
         $sum += $row['amount'];
       
+      $entry = new stdClass;
+      $entry->stock_id = $stock['id'];
+      $entry->value    = $stock['value'];
+      $entry->volume   = $sum;
+      
+      $result = $db->insertObject('#__beursplein_history', $entry);
+      /*
       $this->q("INSERT INTO `jos_beursplein_history` 
         (`stock_id` ,`value` ,`volume`) VALUES 
-        ('{$stock['id']}', '{$stock['value']}', '{$sum}')");
+        ('{$stock['id']}', '{$stock['value']}', '{$sum}')");*/
+      echo $db->getQuery();
+      $this->dispResult($result);
     }
   }
   
@@ -193,32 +222,6 @@ class BeurspleinViewCron extends JView
     else
     {
       echo " <b>Error, not a bool</b><br />\r\n";
-    }
-  }
-  
-  function q($q)
-  {
-    $db = JFactory::getDBO();
-    $db->setQuery($q);
-    $result = $db->query();
-    
-    if($result===false)
-    {
-      $this->disp($q);
-      exit("Could not successfully run query ($sql) from DB: " . mysql_error());
-    }
-    elseif($result===true) //Update statement
-    {
-      $affected = mysql_affected_rows();
-      $this->disp($q." (OK, affected: {$affected})");
-      return $result;
-    }
-    else //Select statement
-    {
-      $numrows = mysql_num_rows($result);
-      $affected = mysql_affected_rows();
-      $this->disp($q." (numrows: {$numrows}, affected: {$affected})");
-      return $result;
     }
   }
 }
