@@ -55,13 +55,13 @@ class BeurspleinModelPortfolio extends JModel
     
     foreach($list as $stock)
     {
-      if(isset($stockList[$stock['id']]))
+      if(isset($stockList[$stock['stock_id']]))
       {
-        $stockList[$stock['id']]['amount'] += $stock['amount'];
+        $stockList[$stock['stock_id']]['amount'] += $stock['amount'];
       }
       else
       {
-        $stockList[$stock['id']] = $stock;
+        $stockList[$stock['stock_id']] = $stock;
       }
     }
     return $stockList;
@@ -281,6 +281,7 @@ class BeurspleinModelPortfolio extends JModel
   
   /*
    * Deletes all stocks with amount == 0 from db
+   * @return number of deleted records (can be 0!!!)
    */
   function deleteEmptyStocks()
   {
@@ -288,8 +289,12 @@ class BeurspleinModelPortfolio extends JModel
     $q  = "DELETE
            FROM ".$db->nameQuote('#__beursplein_portfolio')." 
            WHERE ".$db->nameQuote('amount')." = ".$db->quote(0);
-    $db->setQuery;
-    return $db->query();
+    $db->setQuery($q);
+    $result = $db->query();
+    if(!$result)
+      return false;
+    else
+      return $db->getAffectedRows();
   }
 }
 

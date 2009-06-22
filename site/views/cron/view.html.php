@@ -14,30 +14,83 @@ class BeurspleinViewCron extends JView
 {
   function display($tpl = null)
   {
+    $this->updateCanSell();
+    
+    
+    parent::display($tpl);
+  }
+  
+  function updateCanSell()
+  {
     $this->disp("<h4>Updating portfolio</h4>");
-
-    $q = "SELECT * FROM `jos_beursplein_portfolio` WHERE `can_sell` = 1";
-    $result = $this->q($q);
-
-    while($row = mysql_fetch_assoc($result))
+    
+    $db = JFactory::getDBO();
+    $q = "SELECT * 
+          FROM `#__beursplein_portfolio` 
+          WHERE `can_sell` = '1'";
+    $db->setQuery($q);
+    $this->disp($q);
+    
+    $todo = $db->loadAssocList();
+    
+    foreach($todo as $row)
     {
       //Search for same stock with can_sell == 0
-      $r = $this->q("SELECT * FROM `jos_beursplein_portfolio` WHERE `can_sell`=0 AND ".
-        "`owner`='{$row['owner']}' AND `stock_id`='{$row['stock_id']}'");
-      $rows = mysql_num_rows($r);
+      $q = "SELECT * 
+            FROM  `jos_beursplein_portfolio` 
+            WHERE `can_sell` = '0' 
+            AND   `owner`    = '{$row['owner']}' 
+            AND   `stock_id` = '{$row['stock_id']}'";
+      $db->setQuery($q);
+      $this->disp($q);
+      
+      $db->query();
+      
+      $rows = $db->getNumRows();
       
       if($rows==0) //Not in DB, so normally update
       {
-        $this->q("UPDATE `jos_beursplein_portfolio` SET `can_sell` = '0' WHERE `id` ={$row['id']} LIMIT 1");
+        $stock = new stdClass;
+        $stock->can_sell = 0;
+        $stock->id       = $row['id'];
+        
+        $result = $db->updateObject('#__beursplein_portfolio', $stock, 'id');
+        
+        /*
+        $q = "UPDATE `jos_beursplein_portfolio` 
+            SET `can_sell` = '0' 
+            WHERE `id` ={$row['id']} 
+            LIMIT 1";
+        $db->setQuery($q);*/
+        echo $db->getQuery();
+        $this->dispresult($result);
       }
       elseif($rows==1) //Already in DB, so add amounts
       {
-        $row2 = mysql_fetch_assoc($r);
+        $row2 = $db->loadAssoc();
         //Update the old
-        $this->q("UPDATE `jos_beursplein_portfolio` SET `amount` = `amount`+'{$row['amount']}', ".
-            "`can_sell` = '2' WHERE `id` ={$row2['id']} LIMIT 1");
+        $stock = new stdClass;
+        $stock->amount = $row2['amount'] + $row['amount'];
+        $stock->can_sell = 0;
+        $stock->id       = $row2['id'];
+        
+        $result = $db->updateObject('#__beursplein_portfolio', $stock, 'id');
+        echo $db->getQuery();
+        $this->dispresult($result);
+            
+            /*
+        $this->q("UPDATE `jos_beursplein_portfolio` 
+            SET `amount` = `amount`+'{$row['amount']}', ".
+            "`can_sell` = '0' WHERE `id` ={$row2['id']} LIMIT 1");*/
+        
         //Delete the other
-        $this->q("DELETE FROM `jos_beursplein_portfolio` WHERE `id` = '{$row['id']}' LIMIT 1");
+        $q = "DELETE 
+                FROM `#__beursplein_portfolio`
+                WHERE `id` = '{$row['id']}' 
+                LIMIT 1";
+        $db->setQuery($q);
+        echo $db->getQuery();
+        $this->dispresult($db->query());
       }
       else
       {
@@ -45,6 +98,17 @@ class BeurspleinViewCron extends JView
       }
     }
     
+    $q = "UPDATE `#__beursplein_portfolio`
+        SET `can_sell` = '1'
+        WHERE `can_sell` = '2'";
+    $db->setQuery($q);
+    echo $q;
+    
+    $this->dispResult($db->query());
+    
+    
+    
+    exit();
     $this->disp("<h4>Updating Stocks</h4>");
     
     //Process the cards...
@@ -56,7 +120,7 @@ class BeurspleinViewCron extends JView
     }
     
     //TODO
-    //
+    //Process the cards
     //
     
     //Add some random
@@ -108,11 +172,30 @@ class BeurspleinViewCron extends JView
         (`stock_id` ,`value` ,`volume`) VALUES 
         ('{$stock['id']}', '{$stock['value']}', '{$sum}')");
     }
-    
-    parent::display($tpl);
   }
   
-  function disp($s){echo $s;echo "<br />\r\n";}
+  function disp($s)
+  {
+    echo $s;
+    echo "<br />\r\n";
+  }
+  
+  function dispResult($result)
+  {
+    if($result === true)
+    {
+      echo " <b>OK</b><br />\r\n";
+    }
+    elseif($result === false)
+    {
+      echo " <b>Error</b><br />\r\n";
+    }
+    else
+    {
+      echo " <b>Error, not a bool</b><br />\r\n";
+    }
+  }
+  
   function q($q)
   {
     $db = JFactory::getDBO();

@@ -113,7 +113,9 @@ class BeurspleinController extends JController
             //Update the money
             if($userModel->setMoney($user_id, $money - $totalValue))
             {
-              if(!$portfolioModel->deleteEmptyStocks())
+              $result = $portfolioModel->deleteEmptyStocks();
+              
+              if($result === false)
               {
                 $error = true;
                 $msg   = "Can not delete old records!";
