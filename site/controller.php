@@ -34,7 +34,7 @@ class BeurspleinController extends JController
     $userModel      = JController::getModel("Users");
 
     //Get the view
-    $viewName = JRequest::getVar('view');
+    $viewName = JRequest::getVar('view', 'home');
     $view     = JController::getView($viewName,'html');
 
     //Add the models every view needs
