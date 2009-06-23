@@ -118,8 +118,13 @@ else
   $counter    = 0;
   foreach($cardsList as $card)
   {
+    //Begin of the table
     if($counter==0)
       echo "    <tr>\r\n";
+    
+    //Don't display played cards
+    if($card['status'] != 'deck')
+        continue;
     
     $images = explode(",", $card['images']);
     if(count($images)!=4)

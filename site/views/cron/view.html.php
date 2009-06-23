@@ -331,13 +331,13 @@ class BeurspleinViewCron extends JView
     //Delete all cards
     foreach($cardList as $id)
     {
-      $q = "DELETE 
-          FROM `#__beursplein_cards` 
-          WHERE `id` = $id 
-          LIMIT 1";
-      $db->setQuery($q);
+      $entry = new stdClass;
+      $entry->status = 'played';
+      $entry->id     = $id;
+      
+      $result = $db->updateObject('#__beursplein_cards', $entry, 'id');
       echo $db->getQuery();
-      $this->dispResult($db->query());
+      $this->dispResult($result);
     }
     
     //Set all selected cards to NULL
