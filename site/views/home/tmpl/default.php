@@ -83,7 +83,7 @@ else
 ?>
 
 <p>
-  Totale waarde aandelen pakket: &euro;<?php echo $this->totalValue;?><br />
+  Totale waarde aandelen pakket: &euro;<?php echo $totalValue;?><br />
   Liquide middelen voor transactie: &euro;<?php echo $this->money;?>
 
 </p>
@@ -102,7 +102,7 @@ if(count($cardsList)==0)
 {
   ?>
 <form action="index.php?option=com_beursplein&amp;task=getcards" method="post">
-  <input type="submit" name="getstocks" value="Klik hier om kaarten uitegedeeld te krijgen" />";
+  <input type="submit" name="getstocks" value="Klik hier om kaarten uitegedeeld te krijgen" />
 </form>
 <?php
 }

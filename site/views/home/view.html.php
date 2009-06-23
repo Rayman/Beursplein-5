@@ -35,11 +35,4 @@ class BeurspleinViewHome extends JView
     
     parent::display($tpl);
   }
-  
-  function buildStocksTable(&$stocksTable, &$totalValue)
-  {
-
-    
-    
-  }
 }
