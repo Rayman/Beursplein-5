@@ -28,6 +28,21 @@ class BeurspleinModelStocks extends JModel
     return $list;
   }
   
+  /*
+   * Gets the stocks, mapped to their id's
+   */
+  function getStocksListTransformed()
+  {
+    $db =& JFactory::getDBO();
+
+    $query = "SELECT * FROM ".$db->nameQuote('#__beursplein_stocks');
+    $db->setQuery( $query );
+    $list = $db->loadAssocList('id');
+
+    return $list;
+  }
+  
+  
   /**
    * Get all the stocks with the prices
    * @return array with $stock_id => $price

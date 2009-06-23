@@ -83,15 +83,13 @@ else
 }
 ?>
 
+
 <p>
   Totale waarde aandelen pakket: &euro;<?php echo $totalValue;?><br />
   Liquide middelen voor transactie: &euro;<?php echo $this->money;?>
 
 </p>
-<h2>Handels log</h2>
-<p>
-  ASDFDFDFSA
-</p>
+
 <h2>Kaarten</h2>
 
 <?php
@@ -135,26 +133,29 @@ else
       exit("Error, geen 4 images");
 ?>
       <td>
-        <table border="1" style="border-collapse: collapse;<?php
-          if($card['id']==$selectedCard)
-          {
-            echo ' background: yellow;';
-          }
-          ?>">
-          <tr>
-            <td><img src="<?php echo $images[0];?>" alt="" height="40" /></td>
-            <td><img src="<?php echo $images[1];?>" alt="" height="40" /></td>
+        <table <?php
+    if($card['id'] == $selectedCard)
+    {
+      echo 'style="border: 3px solid"';
+    }
+    else
+    {
+      echo 'style="border: 2px dashed #C0C0C0"';
+    }?> rules="none" frame="box">
+          <tr align="center">
+            <td><?php echo JHTML::image($images[0], "", array('height' => "40"));?></td>
+            <td><?php echo JHTML::image($images[1], "", array('height' => "40"));?></td>
           </tr>
-          <tr>
-            <td><img src="<?php echo $images[2];?>" alt="" height="40" /></td>
-            <td><img src="<?php echo $images[3];?>" alt="" height="40" /></td>
+          <tr align="center">
+            <td><?php echo JHTML::image($images[2], "", array('height' => "40"));?></td>
+            <td><?php echo JHTML::image($images[3], "", array('height' => "40"));?></td>
           </tr>
-          <tr>
-            <td><input type="radio" name="card" value="<?php
+          <tr align="center">
+            <td colspan="2"><input type="radio" name="card" value="<?php
               echo $card['id'];echo '"';
               if($card['id']==$selectedCard) 
                 echo ' checked="checked"';
-              ?> /></td>  
+              ?> /></td>
           </tr>
         </table>
       </td>
@@ -178,17 +179,16 @@ else
   </table>
   <select name="stock">
 <?php
-    $stockList     = $this->get('StocksList', 'Stocks');
-    $selectedStock = $this->get('SelectedStock', 'Users');
-    
-    foreach($stockList as $stock)
-    {?>
-    <option value="<?php
-        echo $stock['id']; echo '"';
-      if($stock['id'] == $selectedStock)
+    foreach($this->stockList as $stock)
+    {
+      echo '    <option value="';
+      echo $stock['id']; echo '"';
+      
+      if($stock['id'] == $this->selectedStock)
       {
         echo ' selected="selected"';
       }
+      
       echo '>';
       echo $stock['name'];
       echo "</option>\r\n";
@@ -200,3 +200,8 @@ else
 <?php
 }
 ?>
+
+<h2>Handels log</h2>
+<p>
+ASDFDFDFSA
+</p>

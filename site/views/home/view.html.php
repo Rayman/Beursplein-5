@@ -16,22 +16,18 @@ class BeurspleinViewHome extends JView
   {
     //Get the user's stocks
     $userStocks = $this->get('StocksListTransformed', 'Portfolio');
+    $this->assignRef('userStocks', $userStocks);
     
     //Get the stock's names + images
-    $list = $this->get( 'StocksList', 'Stocks' );
-    //Transform it for better searching
-    $stockList = array();
-    foreach($list as $stock)
-    {
-      $stockList[$stock['id']] = $stock;
-    }
-    
-    $this->assignRef('userStocks', $userStocks);
+    $stockList = $this->get( 'StocksListTransformed', 'Stocks' );
     $this->assignRef('stockList',  $stockList);
     
     //Get the money 
     $money = $this->get( 'Money', 'Users' );
     $this->assignRef( 'money', $money );
+    
+    $selectedStock = $this->get('SelectedStock', 'Users');
+    $this->assignRef('selectedStock', $selectedStock);
     
     parent::display($tpl);
   }
