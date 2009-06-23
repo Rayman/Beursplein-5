@@ -115,7 +115,8 @@ else
   <table>
 <?php
   $selectedCard = $this->get('SelectedCard', 'Users');
-  $counter    = 0;
+  $counter      = 0;
+  $length       = count($cardsList);
   foreach($cardsList as $card)
   {
     //Begin of the table
@@ -124,7 +125,10 @@ else
     
     //Don't display played cards
     if($card['status'] != 'deck')
-        continue;
+    {
+      $length--;
+      continue;
+    }
     
     $images = explode(",", $card['images']);
     if(count($images)!=4)
@@ -156,7 +160,7 @@ else
       </td>
 <?php
     //End of the table
-    if($counter == sizeof($cardsList)-1)
+    if($counter == $length - 1)
     {
       echo "    </tr>\r\n";
     }
