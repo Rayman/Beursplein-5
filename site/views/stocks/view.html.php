@@ -80,7 +80,8 @@ class BeurspleinViewStocks extends JView
       }
       
       //Change in %
-      $changep = round(((float)$stock['change'])/((float)$stock['value'])*100);
+      $changep = round(((float)$stock['change']*100)/
+          (((float)($stock['value']) - $stock['change'])));
       
       //Add the '+' sign
       $changep = $stock['change'] >= 0 ? "+".(string)$changep     : $changep;

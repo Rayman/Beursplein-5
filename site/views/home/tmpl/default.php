@@ -57,7 +57,8 @@ else
     }
     
     //Change in %
-    $changep = round(((float)$stockInfo['change'])/((float)$stockInfo['value'])*100);
+    $changep = round(((float)$stockInfo['change']*100)/
+        (((float)($stockInfo['value']) - $stockInfo['change'])));
     
     //Add the '+' sign
     $changep = $stockInfo['change'] >= 0 ? "+".(string)$changep             : $changep;
