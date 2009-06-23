@@ -14,8 +14,24 @@ class BeurspleinViewCron extends JView
 {
   function display($tpl = null)
   {
+    //can_sell -= 1
     $this->updateCanSell();
-    $this->updateStocks();
+    
+    //Load all stocks
+    $db = JFactory::getDBO();
+    $q = "SELECT * FROM `#__beursplein_stocks`";
+    $db->setQuery($q);
+    $stockList = $db->loadAssocList('id');
+    $backup    = $stockList;
+    
+    //Execute cards on the stocklist
+    $removeList = $this->executeCards($stockList);
+    
+    //Add some random on the stocks that didn't change
+    //Save the stocks
+    $this->saveStocks($stockList, $backup);
+    
+    $this->removeCards($removeList);
     
     parent::display($tpl);
   }
@@ -85,9 +101,9 @@ class BeurspleinViewCron extends JView
         
         //Delete the other
         $q = "DELETE 
-                FROM `#__beursplein_portfolio`
-                WHERE `id` = '{$row['id']}' 
-                LIMIT 1";
+              FROM `#__beursplein_portfolio`
+              WHERE `id` = '{$row['id']}' 
+              LIMIT 1";
         $db->setQuery($q);
         echo $db->getQuery();
         $this->dispresult($db->query());
@@ -99,53 +115,147 @@ class BeurspleinViewCron extends JView
     }
     
     $q = "UPDATE `#__beursplein_portfolio`
-        SET `can_sell` = '1'
-        WHERE `can_sell` = '2'";
+          SET `can_sell` = '1'
+          WHERE `can_sell` = '2'";
     $db->setQuery($q);
     echo $q;
     
     $this->dispResult($db->query());
   }
   
-  function updateStocks()
-  { 
-    $this->disp("<br /><h4>Updating Stocks</h4>");
-    
-    //Process the cards...
+  /*
+   * Executes all selected cards
+   * @return the list of id's of cards that have been executed
+   */
+  function executeCards(&$stockList)
+  {
+    $this->disp("<br /><h4>Updating Cards</h4>");
     
     $db = JFactory::getDBO();
     
-    $q = "SELECT * FROM `#__beursplein_stocks`";
+    //Load all selected cards
+    $q = "SELECT `id`, `stock_id`, `card_id` FROM `#__beursplein_users`";
     $db->setQuery($q);
-    $stockList = $db->loadAssocList();
+    $this->disp($db->getQuery());
+    $userList = $db->loadAssocList();
     
-    //TODO
-    //Process the cards
-    //
-    
-    //Add some random
-        foreach($stockList as $stock)
+    //Load belonging cards
+    $cardsList = array();
+    foreach($userList as $user)
     {
-      $old_value = $stock['value'];
+      if(is_null($user['card_id']) || is_null($user['stock_id']))
+        continue;
       
-      if($stock['growing']=="true")
+      $q = "SELECT * FROM `#__beursplein_cards` WHERE `id` = '{$user['card_id']}'";
+      $db->setQuery($q);
+      $this->disp($db->getQuery());
+      
+      $result = $db->loadAssoc();
+      $cardsList[$result['id']] = $result;
+    }
+    
+    //Load all stocks
+    $backup    = $stockList;
+    //List of cards to remove
+    $removeList = array();
+    
+    foreach($userList as $user)
+    {
+      if(is_null($user['card_id']) || is_null($user['stock_id']))
+        continue;
+      
+      $card = $cardsList[$user['card_id']];
+      $this->disp("Executing card_id={$card['id']}, type={$card['type']}");
+      if($card['user_id'] != $user['id'])
       {
-        $stock['speed'] += rand(0,6);
-        if($stock['speed']>=10)
+        $this->disp("That card doesn't belong to you!!!");
+        continue;
+      }
+      if($card['status'] != "deck")
+      {
+        $this->disp("That card is already played!!!");
+      }
+      
+      switch ($card['type'])
+      {
+        case 1:
+          //2x selected stock, 1/2 stock on card
+          $stockList[$user['stock_id']]['value'] *= 2;
+          $stockList[$card['stock_id']]['value'] /= 2;
+          break;
+        case 2:
+          //2x stock on card, 1/2 on selected stock
+          $stockList[$user['stock_id']]['value'] /= 2;
+          $stockList[$card['stock_id']]['value'] *= 2;
+          break;
+        case 3:
+          //+100 stock on card, -10 on all other stocks
+          $stockList[$card['stock_id']]['value'] += 110;//Gets substracted below
+          foreach($stockList as $temp)
+            $stockList[$temp['id']]['value'] -= 10;
+          break;
+        case 4:
+          //+40 on selected stock, -50 on stock on card
+          $stockList[$user['stock_id']]['value'] += 40;
+          $stockList[$card['stock_id']]['value'] -= 50;
+          break;
+        case 5:
+          //+60 on stock on card -30 on selected stock
+          $stockList[$card['stock_id']]['value'] += 60;
+          $stockList[$user['stock_id']]['value'] -= 30;
+          break;
+        default:
+          echo "That card type doesn't exist";
+      }
+      
+      //Add the card to the removelist
+      $removeList[] = $card['id'];
+    }
+    
+    return $removeList;
+  }
+  
+  function saveStocks(&$stockList, &$backup )
+  { 
+    $this->disp("<br /><h4>Updating Stocks</h4>");
+    
+    $db = JFactory::getDBO();
+    
+    //Enumerate trough all stocks
+    foreach($stockList as $stock)
+    {
+      //Backup
+      $old_value = $backup[$stock['id']]['value'];
+      
+      //Add some random
+      if($old_value == $stock['value'])
+      {
+        $this->disp("Adding random to stock {$stock['name']}");
+        if($stock['growing']=="true")
         {
-          $stock['growing']="false";
+          $stock['speed'] += rand(0,6);
+          if($stock['speed']>=10)
+          {
+            $stock['growing']="false";
+          }
         }
+        else
+        {
+          $stock['speed'] -= rand(0,6);
+          if($stock['speed']<=-10)
+          {
+            $stock['growing']="true";
+          }
+        }
+        $stock['value'] += $stock['speed'] + rand(-6,6);
       }
       else
       {
-        $stock['speed'] -= rand(0,6);
-        if($stock['speed']<=-10)
-        {
-          $stock['growing']="true";
-        }
+        $this->disp("Stock {$stock['name']} changed already");
       }
-      $stock['value'] += $stock['speed'] + rand(-6,6);
       
+      //Check for boundaries
+      //TODO, give money if boundaries are crossed
       if($stock['value']<10)
       {
         $stock['value'] = 10;
@@ -158,50 +268,77 @@ class BeurspleinViewCron extends JView
       $change = $stock['value'] - $old_value;
       
       $entry = new stdClass;
-      $entry->value = $stock['value'];
-      $entry->change = $change;
-      $entry->speed = $stock['speed'];
+      $entry->value   = $stock['value'];
+      $entry->change  = $change;
+      $entry->speed   = $stock['speed'];
       $entry->growing = $stock['growing'];
-      $entry->id = $stock['id'];
+      $entry->id      = $stock['id'];
       
       $result = $db->updateObject('#__beursplein_stocks', $entry, 'id');
       echo $db->getQuery();
       $this->dispResult($result);
       
-      /*
-      $this->q("UPDATE `jos_beursplein_stocks`
-        SET `value` = '{$stock['value']}',
-        `change` = '{$change}',
-        `speed` = '{$stock['speed']}',
-        `growing` = '{$stock['growing']}'
-        WHERE `id` ='{$stock['id']}' LIMIT 1");*/
+      $this->logToHistory($stock);
       
-      $q = "SELECT `amount` 
-          FROM `#__beursplein_portfolio` 
-          WHERE `stock_id` = '{$stock['id']}'";
-      $db->setQuery($q);
-      $this->disp($db->getQuery());
-      $amountList = $db->loadAssocList();
-      
-      //Add the amounts
-      $sum = 0;
-      foreach($amountList as $row)
-        $sum += $row['amount'];
-      
-      $entry = new stdClass;
-      $entry->stock_id = $stock['id'];
-      $entry->value    = $stock['value'];
-      $entry->volume   = $sum;
-      
-      $result = $db->insertObject('#__beursplein_history', $entry);
-      /*
-      $this->q("INSERT INTO `jos_beursplein_history` 
-        (`stock_id` ,`value` ,`volume`) VALUES 
-        ('{$stock['id']}', '{$stock['value']}', '{$sum}')");*/
-      echo $db->getQuery();
-      $this->dispResult($result);
+      echo "<br />\r\n";
     }
   }
+  
+  function removeCards($cardList)
+  {
+    $this->disp("<h4>Removing all executed cards</h4>");
+    $db = JFactory::getDBO();
+    
+    //Delete all cards
+    foreach($cardList as $id)
+    {
+      $q = "DELETE 
+          FROM `#__beursplein_cards` 
+          WHERE `id` = $id 
+          LIMIT 1";
+      $db->setQuery($q);
+      echo $db->getQuery();
+      $this->dispResult($db->query());
+    }
+    
+    //Set all selected cards to NULL
+    $q = "UPDATE `#__beursplein_users`
+          SET `card_id`  = NULL , 
+              `stock_id` = NULL";
+    $db->setQuery($q);
+    echo $db->getQuery();
+    $this->dispResult($db->query());
+  } 
+  
+  function logToHistory($stock)
+  {
+    $db = JFactory::getDBO();
+    $q = "SELECT `amount` 
+          FROM `#__beursplein_portfolio` 
+          WHERE `stock_id` = '{$stock['id']}'";
+    $db->setQuery($q);
+    $this->disp($db->getQuery());
+    $amountList = $db->loadAssocList();
+    
+    //Add the amounts
+        $sum = 0;
+    foreach($amountList as $row)
+      $sum += $row['amount'];
+    
+    $entry = new stdClass;
+    $entry->stock_id = $stock['id'];
+    $entry->value    = $stock['value'];
+    $entry->volume   = $sum;
+    
+    $result = $db->insertObject('#__beursplein_history', $entry);
+    /*
+        $this->q("INSERT INTO `jos_beursplein_history` 
+        (`stock_id` ,`value` ,`volume`) VALUES 
+        ('{$stock['id']}', '{$stock['value']}', '{$sum}')");*/
+        echo $db->getQuery();
+    $this->dispResult($result);
+  }
+  
   
   function disp($s)
   {
