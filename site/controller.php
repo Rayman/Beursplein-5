@@ -221,7 +221,7 @@ class BeurspleinController extends JController
     
     $link = "index.php?option=com_beursplein&view=home";
     $msg   = "Je hebt nieuwe kaarten gekregen";
-    $this->setRedirect($link, $msg);   
+    $this->setRedirect($link, $msg);
   }
   
   /*

@@ -258,10 +258,49 @@ class BeurspleinViewCron extends JView
       //TODO, give money if boundaries are crossed
       if($stock['value']<10)
       {
+        //Substract money to users
+        $this->disp("Stock below 10, money loss!!");        
+        $diff = 10 - $stock['value'];
+        
+        $q = "SELECT * FROM `#__beursplein_portfolio` WHERE `stock_id` = '{$stock['id']}'";
+        $db->setQuery($q);
+        $this->disp($db->getQuery());
+        $result = $db->loadAssocList();
+        
+        foreach($result as $entry)
+        {
+          $loss = $entry['amount'] * $diff;
+          $q = "UPDATE `#__beursplein_users`
+              SET `money` = `money` - '$loss'
+              WHERE `id` = '{$entry['owner']}'";
+          $db->setQuery($q);
+          echo $db->getQuery();
+          $this->dispResult($db->query());
+        }
+        
         $stock['value'] = 10;
       }
       if($stock['value']>300)
       {
+        //Add money to users
+        $diff = $stock['value'] - 300;
+        
+        $q = "SELECT * FROM `#__beursplein_portfolio` WHERE `stock_id` = '{$stock['id']}'";
+        $db->setQuery($q);
+        $this->disp($db->getQuery());
+        $result = $db->loadAssocList();
+        
+        foreach($result as $entry)
+        {
+          $gain = $entry['amount'] * $diff;
+          $q = "UPDATE `#__beursplein_users`
+              SET `money` = `money` + '$gain'
+              WHERE `id` = '{$entry['owner']}'";
+          $db->setQuery($q);
+          echo $db->getQuery();
+          $this->dispResult($db->query());
+        }
+        
         $stock['value'] = 300;
       }
       
