@@ -14,11 +14,17 @@ class BeurspleinViewHistory extends JView
 {
   function display($tpl = null)
   { 
-    $historyModel = $this->getModel('History');    
-    $stock_id = JRequest::getInt('stock', 0, 'get');    
-    $history = $historyModel->getHistory($stock_id);
     
-    $this->assignRef('history', $history);
+    $stock_id = JRequest::getInt('stock', 0, 'get');
+    if($stock_id != 0)
+    {
+      $historyModel = $this->getModel('History');
+      $history = $historyModel->getHistory($stock_id);
+      $this->assignRef('history', $history);
+    }
+    
+    $stockList = $this->get('StocksList', 'Stocks');
+    $this->assignRef('stockList', $stockList); 
     
     parent::display($tpl);
   }
