@@ -28,15 +28,26 @@ class BeurspleinController extends JController
    */
   function Display()
   {
+    $userModel      = JController::getModel("Users");
+    
     //Get the models that all views need
     $stocksModel    = JController::getModel("Stocks");
     $portfolioModel = JController::getModel("Portfolio");
     $userModel      = JController::getModel("Users");
-
+    
+    //Checks for new user
+    if(!$userModel->checkUser())
+    {
+      $viewName = "newuser";
+    }
+    else
+    {
+      //Get the viewname
+      $viewName = JRequest::getVar('view', 'home');
+    }
     //Get the view
-    $viewName = JRequest::getVar('view', 'home');
-    $view     = JController::getView($viewName,'html');
-
+    $view = JController::getView($viewName,'html');
+    
     //Add the models every view needs
     $view->setModel($stocksModel);
     $view->setModel($portfolioModel);

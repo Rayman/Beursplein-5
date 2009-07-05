@@ -41,6 +41,29 @@ class BeurspleinModelUsers extends JModel
   }
   
   /**
+   * returns if the users exists
+   */
+  function checkUser($id = null)
+  {
+    if($id == null)
+    {
+      $user = JFactory::getUser();
+      $id = $user->id;
+    }
+    
+    $db = JFactory::getDBO();
+    $q = "SELECT COUNT( ".$db->nameQuote('id')." )
+          FROM ".$db->nameQuote('jos_beursplein_users')."
+          WHERE ".$db->nameQuote('id')." = ".$db->quote('$id');
+    $db->setQuery($q);
+    $db->query();
+    
+    $result = $db->loadResult();
+    
+    return $result === 1 ? true : false;
+  }
+  
+  /**
   * Sets the money of a user to an amount
   * @return Success?
   */
