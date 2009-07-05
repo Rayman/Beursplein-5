@@ -1,45 +1,64 @@
 <?php // no direct access
 defined('_JEXEC') or die('Restricted access');?>
-    <ul style="text-align:center;
-    padding-bottom:5px;
-    padding-top:5px;
-    padding-left:0;
-    margin-top:0; /* cancels gap caused by top padding in Opera 7.54 */
-        margin-left:0;
-    background-color:#036;
-    color:#fff;
-    width:100%;
-    line-height:18px; /* fixes Firefox 0.9.3 */
-        ">
+    <ul>
 <?php
 foreach($this->stockList as $stock)
 {?>
-    <li style="	display:inline;
-    padding-left:10px;
-    padding-right:10px;
-    padding-bottom:5px;
-    padding-top:5px;
-    border-right:1px solid #fff;
-    "><?php echo $stock['name'];?></li>
+    <li><a href="index.php?option=com_beursplein&amp;view=history&amp;stock=<?php 
+        echo $stock['id'];?>"><?php echo $stock['name'];?></a></li>
     
         <?php } ?>
     
 </ul>
+
+<?php
+if(isset($this->history))
+{?> 
     
-    
-    
-<h1>Geschiedenis van KOERSJE</h1>
+<h1>Geschiedenis van <?php echo $this->stockName;?></h1>
+
+<h2>Waarde</h2>
 
 <table
-    style="height: 200px; background-color: white"
+    style="height: 300px; background-color: #55FF55"
     width="100"
     cellspacing="0"
     cellpadding="0"
     border="0">
   <tr>
 <?php
-if(isset($this->history))
+foreach($this->history as $row)
+  {?>
+    <td valign="bottom">
+      <table style="height: 100%;" width="10px" cellspacing="0" cellpadding="0" border="0">
+        <tr>
+          <td></td>
+        </tr>
+        <tr>
+          <td style="height: <?php echo $row['value'];?>px; background-color: green"></td>
+        </tr>
+      </table>
+    </td>
+<?php
+  }?>
+  </tr>
+</table>
+<h2>Volume</h2>
+<table
+    style="height: 300px; background-color: #55FF55"
+    width="100"
+    cellspacing="0"
+    cellpadding="0"
+    border="0">
+  <tr>
+<?php
 {
+  $maxVolume = 0;
+  foreach($this->history as $row)
+  {
+    $maxVolume = max($maxVolume, $row['volume']);
+  }
+  
   foreach($this->history as $row)
   {?>
     <td valign="bottom">
@@ -48,14 +67,30 @@ if(isset($this->history))
           <td></td>
         </tr>
         <tr>
-          <td style="height: <?php echo $row['value'];?>px; background-color: red"></td>
+          <?php
+          if($maxVolume == 0)
+          {
+            echo "<td></td>";
+          }
+          else
+          {            
+            $height = $row['volume'] * 300 / $maxVolume;
+            if($height == 0)
+            {
+              echo "<td></td>";
+            }
+            else
+            {?> 
+          <td style="height: <?php echo $height?>px; background-color: green"></td>
+          <?php } }?>
+            
         </tr>
       </table>
     </td>
-<?php
-  }?>
+<?php }?>
   </tr>
 </table>
 <?php
+  }
 }
 ?>

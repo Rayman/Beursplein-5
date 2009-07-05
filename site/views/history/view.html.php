@@ -21,6 +21,10 @@ class BeurspleinViewHistory extends JView
       $historyModel = $this->getModel('History');
       $history = $historyModel->getHistory($stock_id);
       $this->assignRef('history', $history);
+      
+      $stockModel = $this->getModel('Stocks');
+      $stock      = $stockModel->getStock($stock_id);
+      $this->assignRef('stockName', $stock['name']);
     }
     
     $stockList = $this->get('StocksList', 'Stocks');
