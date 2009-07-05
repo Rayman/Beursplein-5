@@ -1,4 +1,5 @@
 #Ignore the build directory
 build/
 copy.sh
+*.swp
 
