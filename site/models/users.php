@@ -83,6 +83,9 @@ class BeurspleinModelUsers extends JModel
     return $db->loadResult();
   }
   
+  /**
+   * Gets the selected stock from the user's table
+   */
   function getSelectedStock($id = null)
   {
     if($id==null)
@@ -100,6 +103,11 @@ class BeurspleinModelUsers extends JModel
     return $db->loadResult();
   }
   
+  /**
+   * Select that card from the user
+   * next reset, it will be executed
+   * @return if success
+   */
   function selectCard($cardID, $user_id, &$msg)
   {
     //Selecteer dan maar
@@ -121,6 +129,12 @@ class BeurspleinModelUsers extends JModel
     } 
   }
   
+  /**
+   * Select that stock
+   * next reset, this stock is chosen
+   * as the stock that is affected by the user's card
+   * @return if success
+   */
   function selectStock($stock_id, $user_id, &$msg)
   { 
     //Selecteer dan maar

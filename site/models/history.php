@@ -13,6 +13,11 @@ jimport( 'joomla.application.component.model' );
  */
 class BeurspleinModelHistory extends JModel
 {
+  /**
+   * Gets the latest entries to the history table
+   * from a selected stock
+   * @return assoc array with entries
+   */
   function getHistory($stock_id, $limit = 20)
   {
     $limit = (int)$limit;

@@ -214,9 +214,6 @@ class BeurspleinModelPortfolio extends JModel
         }
       }
     }
-    
-    
-    
     return true;
   }
   
@@ -279,7 +276,7 @@ class BeurspleinModelPortfolio extends JModel
     return $returnStocks;
   }
   
-  /*
+  /**
    * Deletes all stocks with amount == 0 from db
    * @return number of deleted records (can be 0!!!)
    */

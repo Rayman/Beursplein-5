@@ -28,7 +28,7 @@ class BeurspleinModelStocks extends JModel
     return $list;
   }
   
-  /*
+  /**
    * Gets the stocks, mapped to their id's
    */
   function getStocksListTransformed()
@@ -68,6 +68,10 @@ class BeurspleinModelStocks extends JModel
     return $stockList;
   }
   
+  /**
+   * gets a stock from the db
+   * @return assoc array from the stock
+   */
   function getStock($id)
   {
     $db =& JFactory::getDBO();
