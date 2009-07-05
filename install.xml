@@ -30,7 +30,7 @@
     </sql>
 	</uninstall>
 
-	<media destination="com_hello" folder="media">
+	<media destination="com_beursplein" folder="media">
 	  <folder>cards</folder>
 	  <folder>stocks</folder>
 	</media>
