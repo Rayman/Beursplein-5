@@ -18,6 +18,7 @@ else
 <table border="1" style="border-collapse: collapse;">
   <tr>
     <th>Soort</th>
+    <th>Waarde</th>
     <th>Verandering</th>
   </tr>
 <?php 
@@ -39,6 +40,10 @@ else
     echo JHTML::Image($stockInfo['image'], $stockInfo['name'], Array('height'=>20));
 ?>
 
+    </td>
+    <td>
+      <?php echo $stockInfo['value'];?>
+    
     </td>
 <?php
     //Verandering      
@@ -114,7 +119,17 @@ else
 <?php
   $selectedCard = $this->get('SelectedCard', 'Users');
   $counter      = 0;
-  $length       = count($cardsList);
+  
+  //Count the cards in deck
+  $length = 0;
+  foreach($cardsList as $card)
+  {
+    if($card['status'] == 'deck')
+    {
+      $length++;
+    }
+  }
+  
   foreach($cardsList as $card)
   {
     //Begin of the table
@@ -124,7 +139,6 @@ else
     //Don't display played cards
     if($card['status'] != 'deck')
     {
-      $length--;
       continue;
     }
     
@@ -161,6 +175,7 @@ else
       </td>
 <?php
     //End of the table
+    //echo "counter: {$counter} length: $length";
     if($counter == $length - 1)
     {
       echo "    </tr>\r\n";
