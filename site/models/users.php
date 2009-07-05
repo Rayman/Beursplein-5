@@ -57,11 +57,32 @@ class BeurspleinModelUsers extends JModel
           WHERE ".$db->nameQuote('id')." = ".$db->quote('$id');
     $db->setQuery($q);
     $db->query();
-    
     $result = $db->loadResult();
     
-    return $result === 1 ? true : false;
+    return $result == 1 ? true : false;
   }
+  
+  function registerUser($id = null, $startMoney = 500)
+  {
+    if($id == null)
+    {
+      $user = JFactory::getUser();
+      $id = $user->id;
+      
+      if($id == 0)
+      {
+        return false;
+      }
+    }
+    
+    $db = JFactory::getDBO();
+    $entry = new stdClass;
+    $entry->id = $id;
+    $entry->money = $startMoney;
+    
+    return $db->insertObject('#__beursplein_users', $entry);
+  }
+  
   
   /**
   * Sets the money of a user to an amount

@@ -319,5 +319,31 @@ class BeurspleinController extends JController
       $this->setRedirect($link, $msg);
     }
   }
+  
+  function register()
+  {
+    $userModel = JController::getModel("Users");
+    $result = $userModel->registerUser();
+    
+    if($result)
+    {
+      $msg = "Het is gelukt, je kunt nu meespelen met beursplein 5";
+    }
+    else
+    {
+      $msg = "Er trad een error op. Misschien ben je nog niet ingelogd.";
+    }
+    
+    $link = "index.php?option=com_beursplein&view=home";
+    
+    if(!$result)
+    {
+      $this->setRedirect($link, $msg, 'error');
+    }
+    else
+    {
+      $this->setRedirect($link, $msg);
+    }
+  }
 }
 
