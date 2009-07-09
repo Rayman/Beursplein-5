@@ -233,5 +233,5 @@ else
 
 <h2>Handels log</h2>
 <p>
-ASDFDFDFSA
+<?php echo $this->shortlog;?>
 </p>

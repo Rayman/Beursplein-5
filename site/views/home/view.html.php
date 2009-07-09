@@ -29,6 +29,9 @@ class BeurspleinViewHome extends JView
     $selectedStock = $this->get('SelectedStock', 'Users');
     $this->assignRef('selectedStock', $selectedStock);
     
+    $shortLog = $this->get('Shortlog', 'Log');
+    $this->assignRef('shortlog', $shortLog);
+    
     parent::display($tpl);
   }
 }
