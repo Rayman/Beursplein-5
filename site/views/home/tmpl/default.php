@@ -39,6 +39,7 @@ else
     echo $stock['amount'];
     echo ' x ';
     echo JHTML::Image($stockInfo['image'], $stockInfo['name'], Array('height'=>20));
+    echo " " . $stockInfo['name'];
 ?>
 
     </td>
