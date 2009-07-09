@@ -36,15 +36,23 @@ class BeurspleinController extends JController
     $userModel      = JController::getModel("Users");
     
     //Checks for new user
-    if(!$userModel->checkUser())
+    switch($userModel->checkUser())
     {
-      $viewName = "newuser";
+      case 0:
+        $viewName = "newuser";
+        break;
+      case 1:
+        $viewName = "newuser";
+        break;
+      case 2:
+        //Get the viewname
+        $viewName = JRequest::getVar('view', 'home');
+        break;
+      default:
+        $viewName = "newuser";
+        break;
     }
-    else
-    {
-      //Get the viewname
-      $viewName = JRequest::getVar('view', 'home');
-    }
+    
     //Get the view
     $view = JController::getView($viewName,'html');
     

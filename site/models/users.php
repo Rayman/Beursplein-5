@@ -41,7 +41,8 @@ class BeurspleinModelUsers extends JModel
   }
   
   /**
-   * returns if the users exists
+   * Checks the state of the current user
+   * @return 0: logged out, 1: newuser, 2: OK
    */
   function checkUser($id = null)
   {
@@ -51,6 +52,9 @@ class BeurspleinModelUsers extends JModel
       $id = $user->id;
     }
     
+    if($id == 0)
+      return 0;
+    
     $db = JFactory::getDBO();
     $q = "SELECT COUNT( ".$db->nameQuote('id')." )
           FROM ".$db->nameQuote('jos_beursplein_users')."
@@ -59,7 +63,7 @@ class BeurspleinModelUsers extends JModel
     $db->query();
     $result = $db->loadResult();
     
-    return $result == 1 ? true : false;
+    return $result == 1 ? 2 : 1;
   }
   
   function registerUser($id = null, $startMoney = 500)
