@@ -95,6 +95,7 @@ echo "</table>";
 money = <?php echo $this->money;?>;
 document.getElementById('money').innerHTML = money;
 
+var priceList = new Array();
 <?php echo $this->javascriptPriceList;?>
 
 /*
