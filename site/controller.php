@@ -62,10 +62,14 @@ class BeurspleinController extends JController
     $view->setModel($userModel);
     
     //Some additional models
-    if($viewName=="history") $view->setModel(JController::getModel("History"));
-    if($viewName=='dealcards' || $viewName=='home')
-       $view->setModel(JController::getModel("Cards"));
-
+    if($viewName=="history")   $view->setModel(JController::getModel("History"));
+    if($viewName=='dealcards') $view->setModel(JController::getModel("Cards"));
+    if($viewName=='home')
+    {
+      $view->setModel(JController::getModel("Cards"));
+      $view->setModel(JController::getModel("Log"));
+    }
+    
     //Display the view
     $view->display();
   }
@@ -114,11 +118,13 @@ class BeurspleinController extends JController
         $stocksModel = JController::getModel("Stocks");
         $priceList = $stocksModel->getPriceList();
 
-        //Check if money is enough
+        //Calculate the total money needed for transaction
         foreach($stocks as $stock_id => $amount)
         {
 	  $totalValue += $amount * $priceList[$stock_id];
         }
+        
+        //Money check
         if($totalValue>$money)
         {
           $msg = "Je hebt te weinig geld om die aandelen te kopen";
@@ -129,6 +135,32 @@ class BeurspleinController extends JController
           //Voeg de aandelen toe
           if($portfolioModel->addStocks($user_id, $stocks, $msg))
           {
+            //Get all stock info
+            $stockInfo = $stocksModel->getStocksListTransformed();
+            
+            //Log everything
+            $logModel = $this->getModel('Log');
+            foreach($stocks as $stock_id => $amount)
+            {
+              $price = abs($amount * $stockInfo[$stock_id]['value']);
+              
+              if($amount > 0)
+              {
+                $text = "Buy: {$amount} x {$stockInfo[$stock_id]['name']} voor &euro;{$price}";
+              }
+              else
+              {
+                $amount = abs($amount);
+                $text = "Sell: {$amount} x {$stockInfo[$stock_id]['name']} voor &euro;{$price}";
+              }
+              
+              if(!$logModel->log($text, $user_id))
+              {
+                $error = true;
+                $msg   = "Er was een error bij het wegschrijven van de log.";
+              }
+            }
+            
             //Update the money
             if($userModel->setMoney($user_id, $money - $totalValue))
             {
@@ -170,7 +202,7 @@ class BeurspleinController extends JController
     }
   }  
   
-  /*
+  /**
    * Geeft de user nieuwe kaarten
    */
   function getcards()
@@ -239,11 +271,11 @@ class BeurspleinController extends JController
     }
     
     $link = "index.php?option=com_beursplein&view=home";
-    $msg   = "Je hebt nieuwe kaarten gekregen";
+    $msg  = "Je hebt nieuwe kaarten gekregen";
     $this->setRedirect($link, $msg);
   }
   
-  /*
+  /**
    * Select the card so next reset, it gets played
    */
   function selectcard()
