@@ -58,7 +58,7 @@ class BeurspleinModelUsers extends JModel
     $db = JFactory::getDBO();
     $q = "SELECT COUNT( ".$db->nameQuote('id')." )
           FROM ".$db->nameQuote('jos_beursplein_users')."
-          WHERE ".$db->nameQuote('id')." = ".$db->quote('$id');
+          WHERE ".$db->nameQuote('id')." = ".$db->quote($id);
     $db->setQuery($q);
     $db->query();
     $result = $db->loadResult();

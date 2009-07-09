@@ -5,7 +5,8 @@ defined('_JEXEC') or die('Restricted access');?>
 
 <?php
 if(count($this->userStocks)==0)
-{?>
+{
+  $totalValue = 0;?>
 <p>
   Je hebt nog geen aandelen, ga naar Aandelen om ze te kopen
 </p>
