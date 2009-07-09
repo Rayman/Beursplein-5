@@ -114,15 +114,10 @@ if(count($cardsList)==0)
 }
 else
 {
-  //Display the cards table
-  ?>
-<form action="index.php?option=com_beursplein&amp;task=selectcard" method="post">
-  <table>
-<?php
   $selectedCard = $this->get('SelectedCard', 'Users');
   $counter      = 0;
   
-  //Count the cards in deck
+  // Count the cards in deck
   $length = 0;
   foreach($cardsList as $card)
   {
@@ -131,6 +126,23 @@ else
       $length++;
     }
   }
+  
+  if($length == 0)
+  {?>
+<p>
+  Je hebt al je kaarten al gebruikt, wacht to de volgende reset, of mail de <?php
+  echo JHTML::link('mailto:rayman747@hotmail.com?subject=Beursplein+moet+gereset+worden','admin');?>
+</p>
+<?php
+  }
+  else
+  {
+    //Display the cards table
+    ?>
+<form action="index.php?option=com_beursplein&amp;task=selectcard" method="post">
+  <table>
+<?php
+
   
   foreach($cardsList as $card)
   {
@@ -215,6 +227,7 @@ else
   <input type="submit" value="Update je Keuze!" />
 </form>
 <?php
+}
 }
 ?>
 
