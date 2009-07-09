@@ -1,0 +1,30 @@
+First you must download all development files:
+
+-Open the terminal
+-Go to the directory where you want those files to be place,
+ normally it is the home directory
+
+-Execute the following command:
+>>git clone git://repo.or.cz/Beursplein5.git
+
+-The directory Beursplein5 is now created
+>>cd Beursplein5
+
+Update to the latest version of the files
+>>git pull
+
+Make the component
+>>make
+
+Look into the /build/ directory, the file 'com_beursplein.zip' has been created.
+This is the components installation file for joomla.
+
+Next step, install joomla, (for example in /var/www/joomla)
+Go to the admin interface, click extensions -> install/uninstall
+Upload the com_beursplein.zip
+The component has now been installed
+
+Now you must add the stocks, go to components -> Beursplein 5
+
+The rest has to be created....
+
