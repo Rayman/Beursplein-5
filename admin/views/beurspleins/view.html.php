@@ -13,15 +13,14 @@ jimport( 'joomla.application.component.view' );
  */
 class BeurspleinsViewBeurspleins extends JView
 {
-	/**
-	 * Beurspleins view display method
-	 * @return void
-	 **/
-	function display($tpl = null)
-	{
-		JToolBarHelper::title(JText::_('Beursplein 5 Manager'), 'generic.png');
-
-		parent::display($tpl);
-	}
+  /**
+   * Beurspleins view display method
+   * @return void
+   **/
+  function display($tpl = null)
+  {
+    JToolBarHelper::title(JText::_('Beursplein 5 Manager'), 'generic.png');
+    
+    parent::display($tpl);
+  }
 }
-

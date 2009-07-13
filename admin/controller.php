@@ -31,6 +31,15 @@ class BeurspleinsController extends JController
    */
   function Display()
   {
+    //Get the viewname
+    $viewName = JRequest::getVar('view', 'home');
+    
+    //Get the view
+    $view = JController::getView($viewName,'html');
+    
+    if($view == 'Stocks')
+      $view->setModel(JController::getModel("Stocks"));
+    
     parent::display();
   }
 }
