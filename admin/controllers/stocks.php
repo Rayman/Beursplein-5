@@ -1,92 +1,85 @@
 <?php
 /**
- * Hello Controller for Hello World Component
- * 
- * @package    Joomla.Tutorials
- * @subpackage Components
- * @link http://docs.joomla.org/Developing_a_Model-View-Controller_Component_-_Part_4
- * @license		GNU/GPL
+ * Stocks Controller for Beursplein 5 Component
  */
 
 // No direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
 /**
- * Hello Hello Controller
- *
- * @package    Joomla.Tutorials
- * @subpackage Components
+ * Beurspleins Stocks Controller
  */
-class HellosControllerHello extends HellosController
+class BeurspleinsControllerStocks extends BeurspleinsController
 {
-	/**
-	 * constructor (registers additional tasks to methods)
-	 * @return void
-	 */
-	function __construct()
-	{
-		parent::__construct();
+  /**
+   * constructor (registers additional tasks to methods)
+   * @return void
+   */
+  function __construct()
+  {
+    parent::__construct();
 
-		// Register Extra tasks
-		$this->registerTask( 'add'  , 	'edit' );
-	}
+    // Register Extra tasks
+    $this->registerTask( 'add'  ,   'edit' );
+  }
 
-	/**
-	 * display the edit form
-	 * @return void
-	 */
-	function edit()
-	{
-		JRequest::setVar( 'view', 'hello' );
-		JRequest::setVar( 'layout', 'form'  );
-		JRequest::setVar('hidemainmenu', 1);
+  /**
+   * display the edit form
+   * @return void
+   */
+  function edit()
+  {
+    JRequest::setVar('view', 'stock');
+    JRequest::setVar('layout', 'form');
+    JRequest::setVar('hidemainmenu', 1);
 
-		parent::display();
-	}
+    parent::display();
+  }
 
-	/**
-	 * save a record (and redirect to main page)
-	 * @return void
-	 */
-	function save()
-	{
-		$model = $this->getModel('hello');
+  /**
+   * save a record (and redirect to main page)
+   * @return void
+   */
+  function save()
+  {
+    $model = $this->getModel('Stocks');
 
-		if ($model->store($post)) {
-			$msg = JText::_( 'Greeting Saved!' );
-		} else {
-			$msg = JText::_( 'Error Saving Greeting' );
-		}
+    if ($model->store($post)) {
+      $msg = JText::_( 'Stock Saved!' );
+    } else {
+      $msg = JText::_( 'Error Saving Stock' );
+    }
 
-		// Check the table in so it can be edited.... we are done with it anyway
-		$link = 'index.php?option=com_hello';
-		$this->setRedirect($link, $msg);
-	}
+    // Check the table in so it can be edited.... we are done with it anyway
+    $link = 'index.php?option=com_beursplein&amp;view=stocks';
+    $this->setRedirect($link, $msg);
+  }
 
-	/**
-	 * remove record(s)
-	 * @return void
-	 */
-	function remove()
-	{
-		$model = $this->getModel('hello');
-		if(!$model->delete()) {
-			$msg = JText::_( 'Error: One or More Greetings Could not be Deleted' );
-		} else {
-			$msg = JText::_( 'Greeting(s) Deleted' );
-		}
+  /**
+   * remove record(s)
+   * @return void
+   */
+  function remove()
+  {
+    $model = $this->getModel('hello');
+    if(!$model->delete()) {
+      $msg = JText::_( 'Error: One or More Greetings Could not be Deleted' );
+    } else {
+      $msg = JText::_( 'Greeting(s) Deleted' );
+    }
 
-		$this->setRedirect( 'index.php?option=com_hello', $msg );
-	}
+    $link = 'index.php?option=com_beursplein&amp;view=stocks';
+    $this->setRedirect($link, $msg);
+  }
 
-	/**
-	 * cancel editing a record
-	 * @return void
-	 */
-	function cancel()
-	{
-		$msg = JText::_( 'Operation Cancelled' );
-		$this->setRedirect( 'index.php?option=com_hello', $msg );
-	}
+  /**
+   * cancel editing a record
+   * @return void
+   */
+  function cancel()
+  {
+    $msg = JText::_( 'Operation Cancelled' );
+    $this->setRedirect( 'index.php?option=com_beursplein', $msg );
+  }
 }
 
