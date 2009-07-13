@@ -3,5 +3,6 @@
 
 <ul>
   <li><a href="index.php?option=com_beursplein&amp;view=stocks">Aandelen manager</a></li>
+  <li><a href="index.php?option=com_beursplein&amp;view=dealcards" onclick="return confirm('Weet je zeker dat je alle kaarten wilt wissen en opniew wilt genereren?')">Deel kaarten opnieuw</a></li>
 </ul>
 

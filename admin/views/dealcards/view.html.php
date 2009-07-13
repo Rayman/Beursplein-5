@@ -1,6 +1,6 @@
 <?php
 /**
-* Beursplein View for Beursplein 5 Component
+* Beurspleins View for Beursplein 5 Component
 */
 
 defined( '_JEXEC' ) or die( 'Restricted access' );
@@ -10,7 +10,7 @@ jimport( 'joomla.application.component.view');
 /**
 * HTML View class for the Beursplein 5 Component
 */
-class BeurspleinViewDealCards extends JView
+class BeurspleinsViewDealCards extends JView
 {
   /**
    * Exectues a SQL command and displays error message and stuff
@@ -60,8 +60,8 @@ class BeurspleinViewDealCards extends JView
     $list = $db->loadAssocList();
 
     //Get the model from the cards table
-    $cardsModel = $this->getModel("Cards");
-
+    $cardsModel = $this->getModel("cards");
+    
     foreach($list as $stock)
     {
       //6 x type 1

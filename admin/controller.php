@@ -37,10 +37,19 @@ class BeurspleinsController extends JController
     //Get the view
     $view = JController::getView($viewName,'html');
     
-    if($view == 'Stocks')
-      $view->setModel(JController::getModel("Stocks"));
+    if($viewName == 'stocks')
+      $view->setModel(JController::getModel("Stocks"), true);
+    if($viewName == 'dealcards')
+      $view->setModel(JController::getModel("Cards"));
+    if($viewName == 'stock')
+      $view->setModel(JController::getModel("Stock"), true);
     
-    parent::display();
+    //Get and push the layout
+    $viewLayout = JRequest::getCmd('layout', 'default');
+    $view->setLayout($viewLayout);
+    
+    //Display the view
+    $view->display();
   }
 }
 
