@@ -61,7 +61,7 @@ class BeurspleinsControllerStocks extends BeurspleinsController
    */
   function remove()
   {
-    $model = $this->getModel('hello');
+    $model = $this->getModel('stock');
     if(!$model->delete()) {
       $msg = JText::_( 'Error: One or More Greetings Could not be Deleted' );
     } else {

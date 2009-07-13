@@ -1,11 +1,6 @@
 <?php
 /**
- * Hello View for Hello World Component
- * 
- * @package    Joomla.Tutorials
- * @subpackage Components
- * @link http://docs.joomla.org/Developing_a_Model-View-Controller_Component_-_Part_4
- * @license		GNU/GPL
+ * Stock View for Beursplein 5 Component
  */
 
 // No direct access
@@ -14,35 +9,32 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 jimport( 'joomla.application.component.view' );
 
 /**
- * Hello View
- *
- * @package    Joomla.Tutorials
- * @subpackage Components
+ * Stock View
  */
-class HellosViewHello extends JView
+class BeurspleinsViewStock extends JView
 {
-	/**
-	 * display method of Hello view
-	 * @return void
-	 **/
-	function display($tpl = null)
-	{
-		//get the hello
-		$hello		=& $this->get('Data');
-		$isNew		= ($hello->id < 1);
+  /**
+   * display method of Stock view
+   * @return void
+   **/
+  function display($tpl = null)
+  {
+    //get the stock
+    $stock    =& $this->get('Data');
+    $isNew    = ($stock->id < 1);
 
-		$text = $isNew ? JText::_( 'New' ) : JText::_( 'Edit' );
-		JToolBarHelper::title(   JText::_( 'Hello' ).': <small><small>[ ' . $text.' ]</small></small>' );
-		JToolBarHelper::save();
-		if ($isNew)  {
-			JToolBarHelper::cancel();
-		} else {
-			// for existing items the button is renamed `close`
-			JToolBarHelper::cancel( 'cancel', 'Close' );
-		}
+    $text = $isNew ? JText::_( 'New' ) : JText::_( 'Edit' );
+    JToolBarHelper::title(   JText::_( 'Stock' ).': <small><small>[ ' . $text.' ]</small></small>' );
+    JToolBarHelper::save();
+    if ($isNew)  {
+      JToolBarHelper::cancel();
+    } else {
+      // for existing items the button is renamed `close`
+      JToolBarHelper::cancel( 'cancel', 'Close' );
+    }
 
-		$this->assignRef('hello',		$hello);
+    $this->assignRef('stock',    $stock);
 
-		parent::display($tpl);
-	}
+    parent::display($tpl);
+  }
 }

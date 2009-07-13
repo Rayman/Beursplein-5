@@ -32,7 +32,7 @@ class BeurspleinsController extends JController
   function Display()
   {
     //Get the viewname
-    $viewName = JRequest::getVar('view', 'home');
+    $viewName = JRequest::getVar('view');
     
     //Get the view
     $view = JController::getView($viewName,'html');
@@ -43,3 +43,4 @@ class BeurspleinsController extends JController
     parent::display();
   }
 }
+
