@@ -27,11 +27,13 @@ class BeurspleinModelPortfolio extends JModel
       $id = $user->id;
     }
     
-    $db =& JFactory::getDBO();    
+    $db =& $this->_db;
+    
     $query = "SELECT * 
-              FROM ".$db->nameQuote('#__beursplein_portfolio')."
+              FROM  ".$db->nameQuote('#__beursplein_portfolio')."
               WHERE ".$db->nameQuote('owner')." = ".$db->quote($id);
     $db->setQuery( $query );
+    
     return $db->loadAssocList();
   }
   
@@ -73,7 +75,7 @@ class BeurspleinModelPortfolio extends JModel
   */
   function getTotalStocks()
   {
-    $db =& JFactory::getDBO();
+    $db =& $this->_db;
     
     $query = "SELECT * FROM #__beursplein_portfolio";
     $db->setQuery( $query );
@@ -110,7 +112,7 @@ class BeurspleinModelPortfolio extends JModel
       {
         if(!isset($msg))
         {
-          $db =& JFactory::getDBO();
+          $db =& $this->_db;
           $msg = "Er was een error: '".$db->getErrorMsg()."', '".$db->getQuery()."'";
           return false;
         }
@@ -134,7 +136,7 @@ class BeurspleinModelPortfolio extends JModel
     if($amount>0) // BUY
     {
       //Query for just bought stocks
-      $db =& JFactory::getDBO();
+      $db =& $this->_db;
       $query = "SELECT ".$db->nameQuote('id').", ".$db->nameQuote('amount')."
                 FROM   ".$db->nameQuote('#__beursplein_portfolio')."
                 WHERE  ".$db->nameQuote('owner')."    = ".$db->quote($user_id)."
@@ -178,7 +180,7 @@ class BeurspleinModelPortfolio extends JModel
     elseif($amount<0) //SELL
     {
       //Query for stocks bought a long time ago
-      $db =& JFactory::getDBO();
+      $db =& $this->_db;
       $query = "SELECT ".$db->nameQuote('id').", ".$db->nameQuote('amount')."
                 FROM   ".$db->nameQuote('#__beursplein_portfolio')."
                 WHERE  ".$db->nameQuote('owner')."    = ".$db->quote($user_id)." 
@@ -282,7 +284,7 @@ class BeurspleinModelPortfolio extends JModel
    */
   function deleteEmptyStocks()
   {
-    $db = JFactory::getDBO();
+    $db =& $this->_db;
     $q  = "DELETE
            FROM ".$db->nameQuote('#__beursplein_portfolio')." 
            WHERE ".$db->nameQuote('amount')." = ".$db->quote(0);

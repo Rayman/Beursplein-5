@@ -28,10 +28,10 @@ class BeurspleinsModelStock extends JModel
 	}
 
 	/**
-	 * Method to set the hello identifier
+	 * Method to set the stock identifier
 	 *
 	 * @access	public
-	 * @param	int Hello identifier
+	 * @param	int Stock identifier
 	 * @return	void
 	 */
 	function setId($id)
@@ -42,7 +42,7 @@ class BeurspleinsModelStock extends JModel
 	}
 
 	/**
-	 * Method to get a hello
+	 * Method to get a Stock
 	 * @return object with data
 	 */
 	function &getData()
@@ -57,7 +57,6 @@ class BeurspleinsModelStock extends JModel
 		if (!$this->_data) {
 			$this->_data = new stdClass();
 			$this->_data->id = 0;
-			$this->_data->greeting = null;
 		}
 		return $this->_data;
 	}
@@ -74,13 +73,13 @@ class BeurspleinsModelStock extends JModel
 
 		$data = JRequest::get( 'post' );
 
-		// Bind the form fields to the hello table
+		// Bind the form fields to the stocks table
 		if (!$row->bind($data)) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
 		}
 
-		// Make sure the hello record is valid
+		// Make sure the stock record is valid
 		if (!$row->check()) {
 			$this->setError($this->_db->getErrorMsg());
 			return false;
@@ -117,6 +116,5 @@ class BeurspleinsModelStock extends JModel
 		}
 		return true;
 	}
-
 }
 
