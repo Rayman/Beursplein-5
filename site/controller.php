@@ -1,6 +1,6 @@
 <?php
 /**
- * Beursplein Controller for Beursplein 5 Component
+ * Beursplein 5 default controller
  */
 
 // No direct access
@@ -8,6 +8,9 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 
 jimport('joomla.application.component.controller');
 
+/**
+ * Beursplein 5 Component Controller
+ */
 class BeurspleinController extends JController
 {
   /**
