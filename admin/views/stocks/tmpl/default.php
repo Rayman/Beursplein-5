@@ -11,7 +11,10 @@
         <input type="checkbox" name="toggle" value="" onclick="checkAll(<?php echo count( $this->items ); ?>);" />
       </th>      
       <th>
-        <?php echo JText::_( 'Greeting' ); ?>
+        <?php echo JText::_( 'Name' ); ?>
+      </th>
+      <th>
+        <?php echo JText::_( 'Image' ); ?>
       </th>
     </tr>
   </thead>
@@ -32,6 +35,9 @@
       <td>
         <a href="<?php echo $link; ?>"><?php echo $row->name; ?></a>
       </td>
+      <td>
+        <a href="<?php echo $link; ?>"><?php echo $row->image; ?></a>
+      </td>
     </tr>
     <?php
     $k = 1 - $k;
@@ -45,3 +51,4 @@
 <input type="hidden" name="boxchecked" value="0" />
 <input type="hidden" name="controller" value="stocks" />
 </form>
+

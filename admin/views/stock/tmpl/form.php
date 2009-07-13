@@ -13,7 +13,20 @@
         </label>
       </td>
       <td>
-        <input class="text_area" type="text" name="stock" id="stock" size="32" maxlength="250" value="<?php echo $this->stock->name;?>" />
+        <input class="text_area"
+               type="text"
+               name="name"
+               id="name"
+               size="32"
+               value="<?php echo $this->stock->name;?>" />
+      </td>
+      <td>
+        <input class="text_area"
+               type="text"
+               name="image"
+               id="image"
+               size="64"
+               value="<?php echo $this->stock->image;?>" />
       </td>
     </tr>
   </table>
@@ -21,8 +34,9 @@
 </div>
 <div class="clr"></div>
 
-<input type="hidden" name="option" value="com_hello" />
+<input type="hidden" name="option" value="com_beursplein" />
 <input type="hidden" name="id" value="<?php echo $this->stock->id; ?>" />
 <input type="hidden" name="task" value="" />
-<input type="hidden" name="controller" value="hello" />
+<input type="hidden" name="controller" value="stocks" />
 </form>
+

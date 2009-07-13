@@ -42,7 +42,7 @@ class BeurspleinsControllerStocks extends BeurspleinsController
    */
   function save()
   {
-    $model = $this->getModel('Stocks');
+    $model = $this->getModel('Stock');
 
     if ($model->store($post)) {
       $msg = JText::_( 'Stock Saved!' );
@@ -51,7 +51,7 @@ class BeurspleinsControllerStocks extends BeurspleinsController
     }
 
     // Check the table in so it can be edited.... we are done with it anyway
-    $link = 'index.php?option=com_beursplein&amp;view=stocks';
+    $link = 'index.php?option=com_beursplein&view=stocks';
     $this->setRedirect($link, $msg);
   }
 
@@ -61,14 +61,14 @@ class BeurspleinsControllerStocks extends BeurspleinsController
    */
   function remove()
   {
-    $model = $this->getModel('stock');
+    $model = $this->getModel('Stock');
     if(!$model->delete()) {
-      $msg = JText::_( 'Error: One or More Greetings Could not be Deleted' );
+      $msg = JText::_( 'Error: One or More Stocks Could not be Deleted' );
     } else {
-      $msg = JText::_( 'Greeting(s) Deleted' );
+      $msg = JText::_( 'Stock(s) Deleted' );
     }
 
-    $link = 'index.php?option=com_beursplein&amp;view=stocks';
+    $link = 'index.php?option=com_beursplein&view=stocks';
     $this->setRedirect($link, $msg);
   }
 
@@ -78,8 +78,9 @@ class BeurspleinsControllerStocks extends BeurspleinsController
    */
   function cancel()
   {
-    $msg = JText::_( 'Operation Cancelled' );
-    $this->setRedirect( 'index.php?option=com_beursplein', $msg );
+    $msg = JText::_('Operation Cancelled');
+    $link = 'index.php?option=com_beursplein&view=stocks';
+    $this->setRedirect($link, $msg);
   }
 }
 
