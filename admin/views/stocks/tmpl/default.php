@@ -36,7 +36,9 @@
         <a href="<?php echo $link; ?>"><?php echo $row->name; ?></a>
       </td>
       <td>
-        <a href="<?php echo $link; ?>"><?php echo $row->image; ?></a>
+        <a href="<?php echo $link; ?>"><?php
+        echo JHTML::image($row->image, $row->name, array('height' => 30));
+        echo " ".$row->image; ?></a>
       </td>
     </tr>
     <?php
