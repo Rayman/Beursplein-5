@@ -16,6 +16,7 @@ class BeurspleinModelLog extends JModel
   /**
    * Logs the text to a users log
    * If user is omitted (or null), it logs it to all persons
+   * If date is omitted (or null), it uses current date
    * @return if success
    */
   function log($text, $user = null, $date = null)
@@ -42,8 +43,7 @@ class BeurspleinModelLog extends JModel
             )
             VALUES 
             ( 
-              ".$user." 
-              ".$db->quote($user)." , 
+              ".$user." ,
               NOW( ) ,
               ".$db->quote($text)."
             )";
@@ -77,6 +77,7 @@ class BeurspleinModelLog extends JModel
             SELECT *
             FROM `#__beursplein_log`
             WHERE `user_id` = ".$db->quote($user_id)."
+            OR `user_id` IS NULL
             ORDER BY `id` DESC
             LIMIT $limit
           )
@@ -110,3 +111,4 @@ class BeurspleinModelLog extends JModel
     return $html;
   }
 }
+
