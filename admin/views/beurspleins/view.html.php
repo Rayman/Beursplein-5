@@ -20,7 +20,7 @@ class BeurspleinsViewBeurspleins extends JView
   function display($tpl = null)
   {
     JToolBarHelper::title(JText::_('Beursplein 5 Manager'), 'generic.png');
-    JToolBarHelper::back();
+    JToolBarHelper::back('Back', 'index.php');
         
     parent::display($tpl);
   }
