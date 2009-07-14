@@ -42,3 +42,4 @@ class BeurspleinModelHistory extends JModel
     return $db->loadAssocList();
   }
 }
+
