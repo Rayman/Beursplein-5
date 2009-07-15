@@ -7,5 +7,5 @@ install:
 	cp -r admin build/admin
 	cp install.xml build/install.xml
 	cd ./build ;\
-	zip -r -9 com_beursplein.zip *
+    7z a -mx9 -tzip com_beursplein *
 
